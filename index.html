@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>納克羅斯雙組連招傷害比較器 v3</title>
+
+  <style>
+    body {
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    h2, h3 {
+      margin-top: 0;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .compare-summary {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .compare-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 1100px) {
+      .compare-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .build {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .build-title {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 5;
+      padding: 8px 0 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .section {
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      background: #fafafa;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .combo-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+      gap: 7px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    select, input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      background: white;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 7px;
+      text-align: center;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef1f5;
+    }
+
+    .left {
+      text-align: left;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 8px;
+    }
+
+    .tile {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      background: white;
+    }
+
+    .tile .name {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .tile .value {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .result {
+      font-size: 28px;
+      font-weight: bold;
+      color: #b00020;
+    }
+
+    .small {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .warning {
+      color: #b00020;
+      font-weight: bold;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .formula {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <h1>納克羅斯雙組連招傷害比較器 v3</h1>
+
+  <div class="compare-summary">
+    <h2>總比較</h2>
+    <table>
+      <tr>
+        <th>項目</th>
+        <th>A 組</th>
+        <th>B 組</th>
+        <th>A - B</th>
+      </tr>
+      <tr>
+        <td>總物攻</td>
+        <td id="compareAAttack">0</td>
+        <td id="compareBAttack">0</td>
+        <td id="compareDiffAttack">0</td>
+      </tr>
+      <tr>
+        <td>暴擊率</td>
+        <td id="compareACrit">0%</td>
+        <td id="compareBCrit">0%</td>
+        <td id="compareDiffCrit">0%</td>
+      </tr>
+      <tr>
+        <td>固定物穿</td>
+        <td id="compareAPierce">0</td>
+        <td id="compareBPierce">0</td>
+        <td id="compareDiffPierce">0</td>
+      </tr>
+      <tr>
+        <td>對手最終物防</td>
+        <td id="compareAArmor">0</td>
+        <td id="compareBArmor">0</td>
+        <td id="compareDiffArmor">0</td>
+      </tr>
+      <tr>
+        <td>一套期望傷害</td>
+        <td id="compareADamage">0</td>
+        <td id="compareBDamage">0</td>
+        <td id="compareDiffDamage">0</td>
+      </tr>
+    </table>
+
+    <p class="small">
+      等級同步規則：只要你更改 A 組的「我方等級」，A 組對手等級、B 組我方等級、B 組對手等級會自動同步成一樣。
+      但同步後你仍然可以各自手動更改，不會被鎖定。
+    </p>
+  </div>
+
+  <div class="compare-layout">
+    <div id="buildA" class="build"></div>
+    <div id="buildB" class="build"></div>
+  </div>
+
+  <div class="compare-summary">
+    <h2>目前公式</h2>
+    <div class="formula">最終防禦力 =
+max(0, (((防禦力 - 固定降防) × (1 - 百分比降防)) - 固定穿透) × (1 - 百分比穿透))
+
+防禦承傷倍率 =
+600 / (600 + 最終防禦力)
+
+單段最終傷害 =
+max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷倍率 - 固定減傷)</div>
+
+    <p class="small">
+      已確認：只有普攻本體吃暴擊。二技能橫掃額外基礎傷害、納克羅斯第四下普攻被動、影刃、全能武器、1 技能、3 技能都不吃暴擊。
+    </p>
+  </div>
+</div>
+
+<script>
+  // =========================
+  // 1. 基礎資料
+  // =========================
+
+  const heroes = {
+    nakroth: {
+      name: "納克羅斯",
+      attack: 172,
+      attackGrowth: 15.3,
+      hp: 3288,
+      hpGrowth: 260,
+      armor: 133,
+      armorGrowth: 20,
+      critRate: 0,
+      critDamage: 200
+    }
+  };
+
+  const enemies = {
+    yuanMarksman: {
+      name: "元流之子・射手",
+      attack: 170,
+      attackGrowth: 17.5,
+      hp: 3500,
+      hpGrowth: 260,
+      armor: 150,
+      armorGrowth: 21,
+      magicDefense: 80,
+      magicDefenseGrowth: 135
+    }
+  };
+
+  const equipments = [
+    {
+      id: "none",
+      name: "未選擇",
+      attack: 0,
+      attackSpeed: 0,
+      critRate: 0,
+      cooldown: 0,
+      hp: 0,
+      flatPierce: 0,
+      critDamageBonus: 0,
+      damageBonus: 0,
+      passives: []
+    },
+    {
+      id: "soulreaver",
+      name: "狩魂之劍",
+      attack: 140,
+      attackSpeed: 0,
+      critRate: 0,
+      cooldown: 10,
+      hp: 0,
+      flatPierce: 60,
+      critDamageBonus: 0,
+      damageBonus: 0,
+      passives: []
+    },
+    {
+      id: "rankbreaker",
+      name: "破陣戰矛",
+      attack: 110,
+      attackSpeed: 0,
+      critRate: 0,
+      cooldown: 0,
+      hp: 0,
+      flatPierce: 0,
+      scalingPierce: true,
+      critDamageBonus: 0,
+      damageBonus: 0,
+      passives: []
+    },
+    {
+      id: "omniArms",
+      name: "全能武器",
+      attack: 70,
+      attackSpeed: 15,
+      critRate: 0,
+      cooldown: 10,
+      hp: 600,
+      flatPierce: 0,
+      critDamageBonus: 0,
+      damageBonus: 0,
+      passives: ["omni"]
+    },
+    {
+      id: "fenrir",
+      name: "王者之劍",
+      attack: 180,
+      attackSpeed: 0,
+      critRate: 0,
+      cooldown: 5,
+      hp: 0,
+      flatPierce: 0,
+      critDamageBonus: 0,
+      damageBonus: 15,
+      passives: ["fenrir"]
+    },
+    {
+      id: "claves",
+      name: "聖劍",
+      attack: 100,
+      attackSpeed: 0,
+      critRate: 25,
+      cooldown: 0,
+      hp: 0,
+      flatPierce: 0,
+      critDamageBonus: 40,
+      damageBonus: 0,
+      passives: ["claves"]
+    },
+    {
+      id: "voidBlade",
+      name: "碎空長刃",
+      attack: 100,
+      attackSpeed: 0,
+      critRate: 0,
+      cooldown: 10,
+      hp: 500,
+      flatPierce: 0,
+      critDamageBonus: 0,
+      damageBonus: 0,
+      passives: []
+    }
+  ];
+
+  const arcanaOptions = {
+    red: [
+      { id: "none", name: "無", attack: 0, critRate: 0, flatPierce: 0, lifesteal: 0 },
+      { id: "rage", name: "暴怒", attack: 0, critRate: 1.6, flatPierce: 0, lifesteal: 0 },
+      { id: "onslaught", name: "猛攻", attack: 2, critRate: 0, flatPierce: 3.6, lifesteal: 0 }
+    ],
+    purple: [
+      { id: "none", name: "無", attack: 0, critRate: 0, flatPierce: 0, lifesteal: 0 },
+      { id: "reave", name: "奪萃", attack: 0, critRate: 0, flatPierce: 0, lifesteal: 1.6 }
+    ],
+    green: [
+      { id: "none", name: "無", attack: 0, critRate: 0, flatPierce: 0, lifesteal: 0 },
+      { id: "dragonClaw", name: "龍爪", attack: 0.9, critRate: 0, flatPierce: 6.4, lifesteal: 0 }
+    ]
+  };
+
+  const skill1Base = [0, 250, 270, 290, 310, 330, 350];
+  const skill2Base = [0, 150, 180, 210, 240, 270, 300];
+  const skill3Base = [0, 220, 270, 320];
+
+  const state = {
+    A: null,
+    B: null
+  };
+
+  // =========================
+  // 2. 建立雙組介面
+  // =========================
+
+  function createBuild(containerId, prefix, title) {
+    const root = document.getElementById(containerId);
+
+    root.innerHTML = `
+      <div class="build-title">
+        <h2>${title}</h2>
+        <div>一套期望傷害：<span class="result" id="${prefix}_totalDamageOut">0</span></div>
+      </div>
+
+      <div class="section">
+        <h3>1. 我方英雄設定</h3>
+        <div class="grid">
+          <div>
+            <label>英雄</label>
+            <select id="${prefix}_heroSelect">
+              <option value="nakroth">納克羅斯</option>
+            </select>
+          </div>
+
+          <div>
+            <label>我方等級</label>
+            <select id="${prefix}_heroLevel"></select>
+          </div>
+
+          <div>
+            <label>技能主升</label>
+            <select id="${prefix}_mainSkill">
+              <option value="s1">主 1 技能</option>
+              <option value="s2">主 2 技能</option>
+            </select>
+          </div>
+
+          <div>
+            <label>一技能等級</label>
+            <select id="${prefix}_skill1Level"></select>
+          </div>
+
+          <div>
+            <label>二技能等級</label>
+            <select id="${prefix}_skill2Level"></select>
+          </div>
+
+          <div>
+            <label>三技能等級</label>
+            <select id="${prefix}_skill3Level"></select>
+          </div>
+
+          <div>
+            <label>起手普攻層數</label>
+            <select id="${prefix}_basicStack">
+              <option value="0">0：下一下不是第四下</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3：下一下普攻觸發被動</option>
+            </select>
+          </div>
+
+          <div>
+            <label>全能武器觸發幾次</label>
+            <input id="${prefix}_omniTriggerLimit" type="number" min="0" max="10" value="1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>2. 裝備選擇：0～6 件</h3>
+        <div class="grid" id="${prefix}_equipmentSlots"></div>
+      </div>
+
+      <div class="section">
+        <h3>3. 奧義設定</h3>
+
+        <p class="small">紅色奧義，合計最多 10 顆</p>
+        <div class="grid" id="${prefix}_redArcanaRows"></div>
+
+        <p class="small">紫色奧義，合計最多 10 顆</p>
+        <div class="grid" id="${prefix}_purpleArcanaRows"></div>
+
+        <p class="small">綠色奧義，合計最多 10 顆</p>
+        <div class="grid" id="${prefix}_greenArcanaRows"></div>
+
+        <p id="${prefix}_arcanaWarning" class="warning"></p>
+      </div>
+
+      <div class="section">
+        <h3>4. 魔紋設定</h3>
+        <div class="grid">
+          <div>
+            <label>上排第 1 格</label>
+            <select id="${prefix}_enchantTop1">
+              <option value="none">無</option>
+              <option value="shadowBlade">影刃</option>
+            </select>
+          </div>
+
+          <div>
+            <label>上排第 2 格</label>
+            <select id="${prefix}_enchantTop2">
+              <option value="none">無 / 暫不計算</option>
+            </select>
+          </div>
+
+          <div>
+            <label>上排第 3 格</label>
+            <select id="${prefix}_enchantTop3">
+              <option value="none">無 / 暫不計算</option>
+            </select>
+          </div>
+
+          <div>
+            <label>下排第 1 格</label>
+            <select id="${prefix}_enchantBottom1">
+              <option value="none">無</option>
+              <option value="sacrificeAxe">犧牲之斧：傷害 +3%</option>
+            </select>
+          </div>
+
+          <div>
+            <label>下排第 2 格</label>
+            <select id="${prefix}_enchantBottom2">
+              <option value="none">無</option>
+              <option value="pierceGrowth">成長穿透：18～60 物穿/魔穿</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>5. 對手與防禦設定</h3>
+        <div class="grid">
+          <div>
+            <label>對手英雄</label>
+            <select id="${prefix}_enemySelect">
+              <option value="yuanMarksman">元流之子・射手</option>
+            </select>
+          </div>
+
+          <div>
+            <label>對手等級</label>
+            <select id="${prefix}_enemyLevel"></select>
+          </div>
+
+          <div>
+            <label>固定降防</label>
+            <input id="${prefix}_fixedDefenseReduction" type="number" value="0" />
+          </div>
+
+          <div>
+            <label>百分比降防 %</label>
+            <input id="${prefix}_percentDefenseReduction" type="number" value="0" />
+          </div>
+
+          <div>
+            <label>百分比穿透 %</label>
+            <input id="${prefix}_percentPierce" type="number" value="0" />
+          </div>
+
+          <div>
+            <label>百分比降傷 %</label>
+            <input id="${prefix}_percentDamageDown" type="number" value="0" />
+          </div>
+
+          <div>
+            <label>百分比減傷總和 %</label>
+            <input id="${prefix}_percentDamageReductionTotal" type="number" value="0" />
+          </div>
+
+          <div>
+            <label>特殊減傷 %</label>
+            <input id="${prefix}_specialReduction" type="number" value="0" />
+          </div>
+
+          <div>
+            <label>固定減傷</label>
+            <input id="${prefix}_fixedDamageReduction" type="number" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>6. 連招設定，最多 10 格</h3>
+        <div class="combo-row" id="${prefix}_comboSlots"></div>
+      </div>
+
+      <div class="section">
+        <h3>7. 總屬性</h3>
+
+        <div class="summary-grid">
+          <div class="tile"><div class="name">基礎物攻</div><div class="value" id="${prefix}_baseAttackOut">0</div></div>
+          <div class="tile"><div class="name">額外物攻</div><div class="value" id="${prefix}_extraAttackOut">0</div></div>
+          <div class="tile"><div class="name">總物攻</div><div class="value" id="${prefix}_totalAttackOut">0</div></div>
+          <div class="tile"><div class="name">暴擊率</div><div class="value" id="${prefix}_critRateOut">0%</div></div>
+          <div class="tile"><div class="name">暴擊傷害</div><div class="value" id="${prefix}_critDamageOut">200%</div></div>
+          <div class="tile"><div class="name">冷卻縮減</div><div class="value" id="${prefix}_cooldownOut">0%</div></div>
+          <div class="tile"><div class="name">固定物穿</div><div class="value" id="${prefix}_pierceOut">0</div></div>
+          <div class="tile"><div class="name">對手原始物防</div><div class="value" id="${prefix}_enemyArmorOut">0</div></div>
+          <div class="tile"><div class="name">對手最終物防</div><div class="value" id="${prefix}_finalArmorOut">0</div></div>
+        </div>
+
+        <table>
+          <tr>
+            <th>來源</th>
+            <th>物攻</th>
+            <th>攻速</th>
+            <th>暴擊率</th>
+            <th>冷卻</th>
+            <th>生命</th>
+            <th>物穿</th>
+            <th>吸血</th>
+            <th>傷害增加</th>
+          </tr>
+          <tr>
+            <td>裝備</td>
+            <td id="${prefix}_equipAttackOut">0</td>
+            <td id="${prefix}_equipAtkSpeedOut">0%</td>
+            <td id="${prefix}_equipCritOut">0%</td>
+            <td id="${prefix}_equipCooldownOut">0%</td>
+            <td id="${prefix}_equipHpOut">0</td>
+            <td id="${prefix}_equipPierceOut">0</td>
+            <td>0%</td>
+            <td id="${prefix}_equipDamageBonusOut">0%</td>
+          </tr>
+          <tr>
+            <td>奧義</td>
+            <td id="${prefix}_arcanaAttackOut">0</td>
+            <td>0%</td>
+            <td id="${prefix}_arcanaCritOut">0%</td>
+            <td>0%</td>
+            <td>0</td>
+            <td id="${prefix}_arcanaPierceOut">0</td>
+            <td id="${prefix}_arcanaLifestealOut">0%</td>
+            <td>0%</td>
+          </tr>
+          <tr>
+            <td>魔紋</td>
+            <td id="${prefix}_enchantAttackOut">0</td>
+            <td>0%</td>
+            <td>0%</td>
+            <td>0%</td>
+            <td>0</td>
+            <td id="${prefix}_enchantPierceOut">0</td>
+            <td>0%</td>
+            <td id="${prefix}_enchantDamageBonusOut">0%</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <h3>8. 逐段傷害</h3>
+        <p id="${prefix}_killCheckOut" class="small"></p>
+        <table>
+          <thead>
+            <tr>
+              <th>順序</th>
+              <th>動作</th>
+              <th>說明</th>
+              <th>原始傷害</th>
+              <th>期望傷害</th>
+            </tr>
+          </thead>
+          <tbody id="${prefix}_damageBreakdown"></tbody>
+        </table>
+
+        <p id="${prefix}_warningOut" class="warning"></p>
+      </div>
+    `;
+
+    initializeBuild(prefix);
+  }
+
+  function initializeBuild(prefix) {
+    const heroLevel = byId(prefix, "heroLevel");
+    const enemyLevel = byId(prefix, "enemyLevel");
+
+    for (let i = 1; i <= 15; i++) {
+      heroLevel.appendChild(new Option(i + " 等", i));
+      enemyLevel.appendChild(new Option(i + " 等", i));
+    }
+
+    heroLevel.value = 8;
+    enemyLevel.value = 8;
+
+    fillSkillSelect(prefix, "skill1Level", 6, false);
+    fillSkillSelect(prefix, "skill2Level", 6, false);
+    fillSkillSelect(prefix, "skill3Level", 3, true);
+
+    createEquipmentSlots(prefix);
+    createArcanaRows(prefix, "red");
+    createArcanaRows(prefix, "purple");
+    createArcanaRows(prefix, "green");
+    createComboSlots(prefix);
+
+    byId(prefix, "basicStack").value = 3;
+    byId(prefix, "enchantTop1").value = "shadowBlade";
+    byId(prefix, "enchantBottom1").value = "sacrificeAxe";
+    byId(prefix, "enchantBottom2").value = "pierceGrowth";
+
+    setEquipmentDefaults(prefix, ["soulreaver", "rankbreaker", "omniArms", "fenrir", "claves", "voidBlade"]);
+
+    if (prefix === "A") {
+      setDefaultArcana(prefix, "red", 0, "rage", 10);
+    } else {
+      setDefaultArcana(prefix, "red", 0, "onslaught", 10);
+    }
+
+    setDefaultArcana(prefix, "purple", 0, "reave", 10);
+    setDefaultArcana(prefix, "green", 0, "dragonClaw", 10);
+
+    setAutoSkillLevels(prefix);
+
+    document.querySelectorAll(`#build${prefix} select, #build${prefix} input`).forEach(input => {
+      input.addEventListener("change", () => handleChange(prefix, input));
+      input.addEventListener("input", () => handleChange(prefix, input));
+    });
+
+    calculate(prefix);
+  }
+
+  function byId(prefix, name) {
+    return document.getElementById(prefix + "_" + name);
+  }
+
+  function fillSkillSelect(prefix, id, maxLevel, allowZero) {
+    const el = byId(prefix, id);
+
+    if (allowZero) {
+      el.appendChild(new Option("0 等 / 尚未學習", 0));
+    }
+
+    for (let i = 1; i <= maxLevel; i++) {
+      el.appendChild(new Option(i + " 等", i));
+    }
+  }
+
+  function createEquipmentSlots(prefix) {
+    const container = byId(prefix, "equipmentSlots");
+
+    for (let i = 1; i <= 6; i++) {
+      const wrap = document.createElement("div");
+      const label = document.createElement("label");
+      label.textContent = "裝備 " + i;
+
+      const select = document.createElement("select");
+      select.className = `${prefix}_equipmentSelect`;
+
+      equipments.forEach(item => {
+        select.appendChild(new Option(item.name, item.id));
+      });
+
+      wrap.appendChild(label);
+      wrap.appendChild(select);
+      container.appendChild(wrap);
+    }
+  }
+
+  function setEquipmentDefaults(prefix, ids) {
+    const selects = document.querySelectorAll(`.${prefix}_equipmentSelect`);
+
+    selects.forEach((select, index) => {
+      select.value = ids[index] || "none";
+    });
+  }
+
+  function createArcanaRows(prefix, color) {
+    const container = byId(prefix, color + "ArcanaRows");
+
+    for (let i = 1; i <= 3; i++) {
+      const wrap = document.createElement("div");
+
+      const label = document.createElement("label");
+      label.textContent = "第 " + i + " 組";
+
+      const select = document.createElement("select");
+      select.className = `${prefix}_arcanaSelect`;
+      select.dataset.color = color;
+
+      arcanaOptions[color].forEach(opt => {
+        select.appendChild(new Option(opt.name, opt.id));
+      });
+
+      const qty = document.createElement("input");
+      qty.type = "number";
+      qty.min = "0";
+      qty.max = "10";
+      qty.value = "0";
+      qty.className = `${prefix}_arcanaQty`;
+      qty.dataset.color = color;
+
+      wrap.appendChild(label);
+      wrap.appendChild(select);
+      wrap.appendChild(qty);
+      container.appendChild(wrap);
+    }
+  }
+
+  function setDefaultArcana(prefix, color, rowIndex, id, qty) {
+    const selects = Array.from(document.querySelectorAll(`.${prefix}_arcanaSelect`)).filter(el => el.dataset.color === color);
+    const qtys = Array.from(document.querySelectorAll(`.${prefix}_arcanaQty`)).filter(el => el.dataset.color === color);
+
+    selects[rowIndex].value = id;
+    qtys[rowIndex].value = qty;
+  }
+
+  function createComboSlots(prefix) {
+    const container = byId(prefix, "comboSlots");
+
+    const options = [
+      { value: "none", label: "空格" },
+      { value: "s1", label: "1技能" },
+      { value: "s2", label: "2技能" },
+      { value: "s3", label: "3技能" },
+      { value: "aa", label: "普攻" }
+    ];
+
+    for (let i = 1; i <= 10; i++) {
+      const wrap = document.createElement("div");
+
+      const label = document.createElement("label");
+      label.textContent = i;
+
+      const select = document.createElement("select");
+      select.className = `${prefix}_comboSelect`;
+
+      options.forEach(opt => {
+        select.appendChild(new Option(opt.label, opt.value));
+      });
+
+      wrap.appendChild(label);
+      wrap.appendChild(select);
+      container.appendChild(wrap);
+    }
+
+    const defaultCombo = ["s2", "s1", "aa", "s3", "aa"];
+
+    document.querySelectorAll(`.${prefix}_comboSelect`).forEach((select, index) => {
+      select.value = defaultCombo[index] || "none";
+    });
+  }
+
+  // =========================
+  // 3. 等級與技能同步
+  // =========================
+
+  function handleChange(prefix, input) {
+    // 需求 1：
+    // 更改 A 組我方等級時，同步 A 對手、B 我方、B 對手。
+    // 但玩家後續仍可手動更改任一等級。
+    if (input.id === "A_heroLevel") {
+      syncAllLevelsFromA();
+      setAutoSkillLevels("A");
+      setAutoSkillLevels("B");
+      calculate("A");
+      calculate("B");
+      return;
+    }
+
+    if (input.id === `${prefix}_heroLevel` || input.id === `${prefix}_mainSkill`) {
+      setAutoSkillLevels(prefix);
+    }
+
+    calculate(prefix);
+  }
+
+  function syncAllLevelsFromA() {
+    const level = byId("A", "heroLevel").value;
+
+    byId("A", "enemyLevel").value = level;
+    byId("B", "heroLevel").value = level;
+    byId("B", "enemyLevel").value = level;
+  }
+
+  function setAutoSkillLevels(prefix) {
+    const level = Number(byId(prefix, "heroLevel").value);
+    const mainSkill = byId(prefix, "mainSkill").value;
+    const allocated = allocateSkills(level, mainSkill);
+
+    byId(prefix, "skill1Level").value = allocated.s1;
+    byId(prefix, "skill2Level").value = allocated.s2;
+    byId(prefix, "skill3Level").value = allocated.s3;
+  }
+
+  function allocateSkills(level, mainSkill) {
+    // 主 1 點法：
+    // 1,2,1,3,1,2,1,3...
+    // 所以 8 等主 1 = 一技 4、二技 2、三技 2。
+    const main1Schedule = [
+      "s1", "s2", "s1", "s3", "s1",
+      "s2", "s1", "s3", "s1", "s2",
+      "s1", "s3", "s2", "s2", "s2"
+    ];
+
+    // 主 2 點法：
+    const main2Schedule = [
+      "s2", "s1", "s2", "s3", "s2",
+      "s1", "s2", "s3", "s2", "s1",
+      "s2", "s3", "s1", "s1", "s1"
+    ];
+
+    const schedule = mainSkill === "s1" ? main1Schedule : main2Schedule;
+    const result = { s1: 0, s2: 0, s3: 0 };
+
+    for (let i = 0; i < level; i++) {
+      result[schedule[i]] += 1;
+    }
+
+    return result;
+  }
+
+  // =========================
+  // 4. 計算工具
+  // =========================
+
+  function round1(num) {
+    return Math.round(num * 10) / 10;
+  }
+
+  function percentText(num) {
+    return round1(num) + "%";
+  }
+
+  function clampPercent(value) {
+    return Math.min(100, Math.max(0, Number(value || 0)));
+  }
+
+  function getRankbreakerPierce(level) {
+    return 40 + 10 * (level - 1);
+  }
+
+  function getEnchantPierce(level) {
+    return 15 + 3 * level;
+  }
+
+  function getHeroStats(level) {
+    const h = heroes.nakroth;
+
+    return {
+      baseAttack: h.attack + h.attackGrowth * (level - 1),
+      baseCritRate: h.critRate,
+      baseCritDamage: h.critDamage
+    };
+  }
+
+  function getEnemyStats(prefix) {
+    const level = Number(byId(prefix, "enemyLevel").value);
+    const e = enemies[byId(prefix, "enemySelect").value];
+
+    return {
+      hp: e.hp + e.hpGrowth * (level - 1),
+      armor: e.armor + e.armorGrowth * (level - 1),
+      magicDefense: e.magicDefense + e.magicDefenseGrowth * (level - 1)
+    };
+  }
+
+  function getEquipmentStats(prefix, heroLevel) {
+    const selectedIds = Array.from(document.querySelectorAll(`.${prefix}_equipmentSelect`)).map(el => el.value);
+    const selectedItems = selectedIds.map(id => equipments.find(item => item.id === id));
+
+    const stats = {
+      attack: 0,
+      attackSpeed: 0,
+      critRate: 0,
+      cooldown: 0,
+      hp: 0,
+      flatPierce: 0,
+      critDamageBonus: 0,
+      damageBonus: 0,
+      hasOmni: false,
+      hasClaves: false,
+      hasFenrir: false,
+      selectedIds
+    };
+
+    selectedItems.forEach(item => {
+      if (!item || item.id === "none") return;
+
+      stats.attack += item.attack || 0;
+      stats.attackSpeed += item.attackSpeed || 0;
+      stats.critRate += item.critRate || 0;
+      stats.cooldown += item.cooldown || 0;
+      stats.hp += item.hp || 0;
+      stats.flatPierce += item.flatPierce || 0;
+
+      if (item.scalingPierce) {
+        stats.flatPierce += getRankbreakerPierce(heroLevel);
+      }
+
+      if (item.passives.includes("omni")) stats.hasOmni = true;
+      if (item.passives.includes("claves")) stats.hasClaves = true;
+      if (item.passives.includes("fenrir")) stats.hasFenrir = true;
+    });
+
+    if (stats.hasClaves) {
+      stats.critDamageBonus = 40;
+    }
+
+    if (stats.hasFenrir) {
+      stats.damageBonus = 15;
+    }
+
+    return stats;
+  }
+
+  function getArcanaStats(prefix) {
+    const stats = {
+      attack: 0,
+      critRate: 0,
+      flatPierce: 0,
+      lifesteal: 0,
+      counts: {
+        red: 0,
+        purple: 0,
+        green: 0
+      }
+    };
+
+    const selects = document.querySelectorAll(`.${prefix}_arcanaSelect`);
+    const qtys = document.querySelectorAll(`.${prefix}_arcanaQty`);
+
+    selects.forEach((select, index) => {
+      const color = select.dataset.color;
+      const qty = Number(qtys[index].value || 0);
+      const option = arcanaOptions[color].find(opt => opt.id === select.value);
+
+      stats.counts[color] += qty;
+      stats.attack += option.attack * qty;
+      stats.critRate += option.critRate * qty;
+      stats.flatPierce += option.flatPierce * qty;
+      stats.lifesteal += option.lifesteal * qty;
+    });
+
+    return stats;
+  }
+
+  function getEnchantStats(prefix, heroLevel) {
+    const stats = {
+      attack: 0,
+      flatPierce: 0,
+      damageBonus: 0,
+      hasShadowBlade: false
+    };
+
+    if (byId(prefix, "enchantTop1").value === "shadowBlade") {
+      stats.hasShadowBlade = true;
+    }
+
+    if (byId(prefix, "enchantBottom1").value === "sacrificeAxe") {
+      stats.damageBonus += 3;
+    }
+
+    if (byId(prefix, "enchantBottom2").value === "pierceGrowth") {
+      stats.flatPierce += getEnchantPierce(heroLevel);
+    }
+
+    return stats;
+  }
+
+  function getActionName(action) {
+    if (action === "s1") return "1技能";
+    if (action === "s2") return "2技能";
+    if (action === "s3") return "3技能";
+    if (action === "aa") return "普攻";
+    return "空格";
+  }
+
+  // =========================
+  // 5. 主計算
+  // =========================
+
+  function calculate(prefix) {
+    const warnings = [];
+
+    const heroLevel = Number(byId(prefix, "heroLevel").value);
+    const skill1Lv = Number(byId(prefix, "skill1Level").value);
+    const skill2Lv = Number(byId(prefix, "skill2Level").value);
+    const skill3Lv = Number(byId(prefix, "skill3Level").value);
+
+    const hero = getHeroStats(heroLevel);
+    const enemy = getEnemyStats(prefix);
+    const equip = getEquipmentStats(prefix, heroLevel);
+    const arcana = getArcanaStats(prefix);
+    const enchant = getEnchantStats(prefix, heroLevel);
+
+    const baseAttack = hero.baseAttack;
+    const extraAttack = equip.attack + arcana.attack + enchant.attack;
+    const totalAttack = baseAttack + extraAttack;
+
+    let critRate = hero.baseCritRate + equip.critRate + arcana.critRate;
+    if (critRate > 100) {
+      critRate = 100;
+      warnings.push("暴擊率超過 100%，計算時以 100% 計。");
+    }
+
+    const critDamage = hero.baseCritDamage + equip.critDamageBonus;
+
+    let cooldown = equip.cooldown;
+    if (cooldown > 40) {
+      cooldown = 40;
+      warnings.push("冷卻縮減超過 40%，顯示與計算時以 40% 計。");
+    }
+
+    const flatPierce = equip.flatPierce + arcana.flatPierce + enchant.flatPierce;
+
+    const fixedDefenseReduction = Number(byId(prefix, "fixedDefenseReduction").value || 0);
+    const percentDefenseReduction = clampPercent(byId(prefix, "percentDefenseReduction").value);
+    const percentPierce = clampPercent(byId(prefix, "percentPierce").value);
+
+    const percentDamageDown = clampPercent(byId(prefix, "percentDamageDown").value);
+    const percentDamageReductionTotal = clampPercent(byId(prefix, "percentDamageReductionTotal").value);
+    const specialReduction = clampPercent(byId(prefix, "specialReduction").value);
+    const fixedDamageReduction = Number(byId(prefix, "fixedDamageReduction").value || 0);
+
+    const afterDefenseReduction = Math.max(
+      0,
+      (enemy.armor - fixedDefenseReduction) * (1 - percentDefenseReduction / 100)
+    );
+
+    const finalArmor = Math.max(
+      0,
+      (afterDefenseReduction - flatPierce) * (1 - percentPierce / 100)
+    );
+
+    const armorDamageMultiplier = 600 / (600 + finalArmor);
+
+    const damageIncreaseMultiplier = 1 + (equip.damageBonus + enchant.damageBonus) / 100;
+
+    const reductionMultiplier =
+      (1 - percentDamageDown / 100) *
+      (1 - percentDamageReductionTotal / 100) *
+      (1 - specialReduction / 100);
+
+    function applyFinalDamage(rawDamage) {
+      const damage =
+        rawDamage *
+        armorDamageMultiplier *
+        damageIncreaseMultiplier *
+        reductionMultiplier -
+        fixedDamageReduction;
+
+      return Math.max(0, damage);
+    }
+
+    function expectedBasicAttackDamage() {
+      const normal = applyFinalDamage(totalAttack);
+      const critical = applyFinalDamage(totalAttack * critDamage / 100);
+
+      return normal * (1 - critRate / 100) + critical * (critRate / 100);
+    }
+
+    const actions = Array.from(document.querySelectorAll(`.${prefix}_comboSelect`)).map(el => el.value);
+
+    let totalDamage = 0;
+    let rows = [];
+
+    let basicCounter = Number(byId(prefix, "basicStack").value);
+    let skill2Buff = false;
+    let shadowStacks = 0;
+    let omniReady = false;
+    let omniUsed = 0;
+    const omniLimit = Math.max(0, Number(byId(prefix, "omniTriggerLimit").value || 0));
+
+    actions.forEach((action, index) => {
+      if (action === "none") return;
+
+      let rawParts = [];
+      let expectedParts = [];
+      let notes = [];
+
+      if (action === "s1") {
+        const raw = skill1Base[skill1Lv] + 0.85 * extraAttack;
+
+        rawParts.push(raw);
+        expectedParts.push(applyFinalDamage(raw));
+        notes.push(`1技能：${skill1Base[skill1Lv]} + 85% 額外物攻，不吃暴擊`);
+
+        if (enchant.hasShadowBlade) {
+          shadowStacks = Math.min(3, shadowStacks + 1);
+          notes.push(`位移技能，影刃 +1，目前 ${shadowStacks} 層`);
+        }
+
+        if (equip.hasOmni) {
+          omniReady = true;
+          notes.push("施放技能後，全能武器進入待觸發狀態");
+        }
+      }
+
+      if (action === "s2") {
+        skill2Buff = true;
+        notes.push("2技能：本身不直接造成傷害，下一次普攻附加橫掃基礎傷害");
+
+        if (enchant.hasShadowBlade) {
+          shadowStacks = Math.min(3, shadowStacks + 1);
+          notes.push(`位移技能，影刃 +1，目前 ${shadowStacks} 層`);
+        }
+
+        if (equip.hasOmni) {
+          omniReady = true;
+          notes.push("施放技能後，全能武器進入待觸發狀態");
+        }
+      }
+
+      if (action === "s3") {
+        if (skill3Lv === 0) {
+          warnings.push("連招中使用 3 技能，但三技能等級是 0，該段以 0 計。");
+        } else {
+          const singleRaw = skill3Base[skill3Lv] + 1.0 * extraAttack;
+          const raw = singleRaw * 4;
+
+          rawParts.push(raw);
+          expectedParts.push(applyFinalDamage(singleRaw) * 4);
+          notes.push(`3技能：4 段 × (${skill3Base[skill3Lv]} + 100% 額外物攻)，不吃暴擊`);
+        }
+
+        if (equip.hasOmni) {
+          omniReady = true;
+          notes.push("施放技能後，全能武器進入待觸發狀態");
+        }
+      }
+
+      if (action === "aa") {
+        // 只有普攻本體吃暴擊。
+        const baseRaw = totalAttack;
+        const baseExpected = expectedBasicAttackDamage();
+
+        rawParts.push(baseRaw);
+        expectedParts.push(baseExpected);
+        notes.push("普攻本體：100% 總物攻，可暴擊，已計入暴擊期望");
+
+        // 二技能橫掃額外基礎傷害：不吃暴擊。
+        if (skill2Buff) {
+          const raw = skill2Base[skill2Lv];
+
+          rawParts.push(raw);
+          expectedParts.push(applyFinalDamage(raw));
+          notes.push(`二技能橫掃額外基礎傷害：${skill2Base[skill2Lv]}，不吃暴擊`);
+          skill2Buff = false;
+        }
+
+        // 第四下普攻被動：不吃暴擊。
+        basicCounter += 1;
+
+        if (basicCounter >= 4) {
+          const raw = 90 + 0.35 * extraAttack;
+
+          rawParts.push(raw);
+          expectedParts.push(applyFinalDamage(raw));
+          notes.push("納克羅斯第四下普攻被動：90 + 35% 額外物攻，不吃暴擊");
+          basicCounter = 0;
+        }
+
+        // 全能武器：不吃暴擊。
+        // 沒選全能武器時，即使欄位輸入次數，也不會計算。
+        if (omniReady) {
+          if (equip.hasOmni && omniUsed < omniLimit) {
+            const raw = totalAttack;
+
+            rawParts.push(raw);
+            expectedParts.push(applyFinalDamage(raw));
+            omniUsed += 1;
+            notes.push(`全能武器第 ${omniUsed} 次：100% 總物攻，不吃暴擊`);
+          } else if (equip.hasOmni && omniUsed >= omniLimit) {
+            notes.push("全能武器待觸發，但已達你設定的觸發次數上限");
+          }
+
+          omniReady = false;
+        }
+
+        // 影刃：不吃暴擊。
+        if (enchant.hasShadowBlade && shadowStacks > 0) {
+          const singleRaw = 30 + heroLevel * 5 + 0.10 * extraAttack;
+          const raw = singleRaw * shadowStacks;
+
+          rawParts.push(raw);
+          expectedParts.push(applyFinalDamage(raw));
+          notes.push(`影刃 ${shadowStacks} 層：${shadowStacks} × [30 + 等級×5 + 10% 額外物攻]，不吃暴擊`);
+          shadowStacks = 0;
+        }
+      }
+
+      const rawTotal = rawParts.reduce((sum, value) => sum + value, 0);
+      const expectedTotal = expectedParts.reduce((sum, value) => sum + value, 0);
+
+      totalDamage += expectedTotal;
+
+      rows.push({
+        index: index + 1,
+        action: getActionName(action),
+        notes: notes.join("<br>"),
+        raw: rawTotal,
+        expected: expectedTotal
+      });
+    });
+
+    // 奧義數量提醒。
+    const colorName = {
+      red: "紅色",
+      purple: "紫色",
+      green: "綠色"
+    };
+
+    const arcanaWarnings = [];
+
+    ["red", "purple", "green"].forEach(color => {
+      if (arcana.counts[color] > 10) {
+        arcanaWarnings.push(`${colorName[color]}奧義目前 ${arcana.counts[color]} 顆，已超過 10 顆；目前仍照輸入值計算。`);
+      }
+    });
+
+    byId(prefix, "arcanaWarning").innerHTML = arcanaWarnings.join("<br>");
+
+    const nonNoneIds = equip.selectedIds.filter(id => id !== "none");
+    const duplicated = nonNoneIds.filter((id, index) => nonNoneIds.indexOf(id) !== index);
+
+    if (duplicated.length > 0) {
+      warnings.push("目前有重複裝備；數值會疊加，但唯一被動只用一次。");
+    }
+
+    outputStats(prefix, {
+      baseAttack,
+      extraAttack,
+      totalAttack,
+      critRate,
+      critDamage,
+      cooldown,
+      flatPierce,
+      enemyArmor: enemy.armor,
+      finalArmor,
+      equip,
+      arcana,
+      enchant,
+      totalDamage,
+      enemyHp: enemy.hp,
+      rows,
+      warnings
+    });
+
+    state[prefix] = {
+      totalAttack,
+      critRate,
+      flatPierce,
+      finalArmor,
+      totalDamage
+    };
+
+    updateComparison();
+  }
+
+  function outputStats(prefix, data) {
+    byId(prefix, "baseAttackOut").textContent = round1(data.baseAttack);
+    byId(prefix, "extraAttackOut").textContent = round1(data.extraAttack);
+    byId(prefix, "totalAttackOut").textContent = round1(data.totalAttack);
+    byId(prefix, "critRateOut").textContent = percentText(data.critRate);
+    byId(prefix, "critDamageOut").textContent = percentText(data.critDamage);
+    byId(prefix, "cooldownOut").textContent = percentText(data.cooldown);
+    byId(prefix, "pierceOut").textContent = round1(data.flatPierce);
+    byId(prefix, "enemyArmorOut").textContent = round1(data.enemyArmor);
+    byId(prefix, "finalArmorOut").textContent = round1(data.finalArmor);
+
+    byId(prefix, "equipAttackOut").textContent = round1(data.equip.attack);
+    byId(prefix, "equipAtkSpeedOut").textContent = percentText(data.equip.attackSpeed);
+    byId(prefix, "equipCritOut").textContent = percentText(data.equip.critRate);
+    byId(prefix, "equipCooldownOut").textContent = percentText(data.equip.cooldown);
+    byId(prefix, "equipHpOut").textContent = round1(data.equip.hp);
+    byId(prefix, "equipPierceOut").textContent = round1(data.equip.flatPierce);
+    byId(prefix, "equipDamageBonusOut").textContent = percentText(data.equip.damageBonus);
+
+    byId(prefix, "arcanaAttackOut").textContent = round1(data.arcana.attack);
+    byId(prefix, "arcanaCritOut").textContent = percentText(data.arcana.critRate);
+    byId(prefix, "arcanaPierceOut").textContent = round1(data.arcana.flatPierce);
+    byId(prefix, "arcanaLifestealOut").textContent = percentText(data.arcana.lifesteal);
+
+    byId(prefix, "enchantAttackOut").textContent = round1(data.enchant.attack);
+    byId(prefix, "enchantPierceOut").textContent = round1(data.enchant.flatPierce);
+    byId(prefix, "enchantDamageBonusOut").textContent = percentText(data.enchant.damageBonus);
+
+    byId(prefix, "totalDamageOut").textContent = Math.round(data.totalDamage);
+
+    byId(prefix, "killCheckOut").textContent =
+      data.totalDamage >= data.enemyHp
+        ? `對手估計生命值約 ${Math.round(data.enemyHp)}。這套期望傷害約 ${Math.round(data.totalDamage)}，理論上足以擊殺。`
+        : `對手估計生命值約 ${Math.round(data.enemyHp)}。這套期望傷害約 ${Math.round(data.totalDamage)}，理論上還差 ${Math.round(data.enemyHp - data.totalDamage)} 傷害。`;
+
+    const tbody = byId(prefix, "damageBreakdown");
+    tbody.innerHTML = "";
+
+    data.rows.forEach(row => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${row.index}</td>
+        <td>${row.action}</td>
+        <td class="left">${row.notes}</td>
+        <td>${Math.round(row.raw)}</td>
+        <td>${Math.round(row.expected)}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+    byId(prefix, "warningOut").innerHTML = data.warnings.join("<br>");
+  }
+
+  function updateComparison() {
+    if (!state.A || !state.B) return;
+
+    document.getElementById("compareAAttack").textContent = round1(state.A.totalAttack);
+    document.getElementById("compareBAttack").textContent = round1(state.B.totalAttack);
+    document.getElementById("compareDiffAttack").textContent = round1(state.A.totalAttack - state.B.totalAttack);
+
+    document.getElementById("compareACrit").textContent = percentText(state.A.critRate);
+    document.getElementById("compareBCrit").textContent = percentText(state.B.critRate);
+    document.getElementById("compareDiffCrit").textContent = percentText(state.A.critRate - state.B.critRate);
+
+    document.getElementById("compareAPierce").textContent = round1(state.A.flatPierce);
+    document.getElementById("compareBPierce").textContent = round1(state.B.flatPierce);
+    document.getElementById("compareDiffPierce").textContent = round1(state.A.flatPierce - state.B.flatPierce);
+
+    document.getElementById("compareAArmor").textContent = round1(state.A.finalArmor);
+    document.getElementById("compareBArmor").textContent = round1(state.B.finalArmor);
+    document.getElementById("compareDiffArmor").textContent = round1(state.A.finalArmor - state.B.finalArmor);
+
+    document.getElementById("compareADamage").textContent = Math.round(state.A.totalDamage);
+    document.getElementById("compareBDamage").textContent = Math.round(state.B.totalDamage);
+    document.getElementById("compareDiffDamage").textContent = Math.round(state.A.totalDamage - state.B.totalDamage);
+  }
+
+  // =========================
+  // 6. 啟動
+  // =========================
+
+  createBuild("buildA", "A", "A 組");
+  createBuild("buildB", "B", "B 組");
+</script>
+</body>
+</html>
