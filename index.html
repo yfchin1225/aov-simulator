@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>納克羅斯雙組連招傷害比較器 v3</title>
+  <title>納克羅斯雙組連招傷害比較器 v4</title>
 
   <style>
     body {
@@ -181,12 +181,20 @@
       overflow-x: auto;
       white-space: pre-wrap;
     }
+
+    .omni-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d7d7d7;
+      background: #fff;
+    }
   </style>
 </head>
 
 <body>
 <div class="container">
-  <h1>納克羅斯雙組連招傷害比較器 v3</h1>
+  <h1>納克羅斯雙組連招傷害比較器 v4</h1>
 
   <div class="compare-summary">
     <h2>總比較</h2>
@@ -252,7 +260,7 @@ max(0, (((防禦力 - 固定降防) × (1 - 百分比降防)) - 固定穿透) ×
 max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷倍率 - 固定減傷)</div>
 
     <p class="small">
-      已確認：只有普攻本體吃暴擊。二技能橫掃額外基礎傷害、納克羅斯第四下普攻被動、影刃、全能武器、1 技能、3 技能都不吃暴擊。
+      v4 修正：只有普攻本體吃暴擊。全能武器觸發次數只在裝備有選全能武器時顯示。王者之劍改成按照連招順序扣血；對手血量低於 50% 後，後續傷害 +30%。
     </p>
   </div>
 </div>
@@ -354,7 +362,7 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
       hp: 0,
       flatPierce: 0,
       critDamageBonus: 0,
-      damageBonus: 15,
+      damageBonus: 0,
       passives: ["fenrir"]
     },
     {
@@ -471,16 +479,18 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
             </select>
           </div>
 
-          <div>
-            <label>全能武器觸發幾次</label>
-            <input id="${prefix}_omniTriggerLimit" type="number" min="0" max="10" value="1" />
-          </div>
         </div>
       </div>
 
       <div class="section">
         <h3>2. 裝備選擇：0～6 件</h3>
         <div class="grid" id="${prefix}_equipmentSlots"></div>
+
+        <div id="${prefix}_omniBox" class="omni-box" style="display:none;">
+          <label>全能武器觸發幾次</label>
+          <input id="${prefix}_omniTriggerLimit" type="number" min="0" max="10" value="1" />
+          <p class="small">只有裝備欄有選「全能武器」時，這個欄位才會顯示並參與計算。</p>
+        </div>
       </div>
 
       <div class="section">
@@ -591,6 +601,13 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
             <input id="${prefix}_fixedDamageReduction" type="number" value="0" />
           </div>
         </div>
+
+        <h3 style="margin-top:14px;">對手目前等級屬性</h3>
+        <div class="summary-grid">
+          <div class="tile"><div class="name">生命值</div><div class="value" id="${prefix}_enemyHpDisplay">0</div></div>
+          <div class="tile"><div class="name">物理防禦</div><div class="value" id="${prefix}_enemyArmorDisplay">0</div></div>
+          <div class="tile"><div class="name">魔法防禦</div><div class="value" id="${prefix}_enemyMagicDefenseDisplay">0</div></div>
+        </div>
       </div>
 
       <div class="section">
@@ -672,6 +689,7 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
               <th>說明</th>
               <th>原始傷害</th>
               <th>期望傷害</th>
+              <th>傷後剩餘血量</th>
             </tr>
           </thead>
           <tbody id="${prefix}_damageBreakdown"></tbody>
@@ -957,15 +975,15 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
   }
 
   function getEnemyStats(prefix) {
-    const level = Number(byId(prefix, "enemyLevel").value);
-    const e = enemies[byId(prefix, "enemySelect").value];
+  const level = Number(byId(prefix, "enemyLevel").value);
+  const e = enemies[byId(prefix, "enemySelect").value];
 
-    return {
-      hp: e.hp + e.hpGrowth * (level - 1),
-      armor: e.armor + e.armorGrowth * (level - 1),
-      magicDefense: e.magicDefense + e.magicDefenseGrowth * (level - 1)
-    };
-  }
+  return {
+    hp: e.hp + e.hpGrowth * (level - 1),
+    armor: e.armor + e.armorGrowth * (level - 1),
+    magicDefense: e.magicDefense + e.magicDefenseGrowth / 14 * (level - 1)
+  };
+}
 
   function getEquipmentStats(prefix, heroLevel) {
     const selectedIds = Array.from(document.querySelectorAll(`.${prefix}_equipmentSelect`)).map(el => el.value);
@@ -1007,10 +1025,6 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
 
     if (stats.hasClaves) {
       stats.critDamageBonus = 40;
-    }
-
-    if (stats.hasFenrir) {
-      stats.damageBonus = 15;
     }
 
     return stats;
@@ -1096,6 +1110,8 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
     const arcana = getArcanaStats(prefix);
     const enchant = getEnchantStats(prefix, heroLevel);
 
+    byId(prefix, "omniBox").style.display = equip.hasOmni ? "block" : "none";
+
     const baseAttack = hero.baseAttack;
     const extraAttack = equip.attack + arcana.attack + enchant.attack;
     const totalAttack = baseAttack + extraAttack;
@@ -1137,14 +1153,19 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
 
     const armorDamageMultiplier = 600 / (600 + finalArmor);
 
-    const damageIncreaseMultiplier = 1 + (equip.damageBonus + enchant.damageBonus) / 100;
-
     const reductionMultiplier =
       (1 - percentDamageDown / 100) *
       (1 - percentDamageReductionTotal / 100) *
       (1 - specialReduction / 100);
 
+    let currentFenrirActive = false;
+    let enemyRemainingHp = enemy.hp;
+    const enemyHalfHp = enemy.hp * 0.5;
+
     function applyFinalDamage(rawDamage) {
+      const fenrirBonus = currentFenrirActive ? 30 : 0;
+      const damageIncreaseMultiplier = 1 + (enchant.damageBonus + fenrirBonus) / 100;
+
       const damage =
         rawDamage *
         armorDamageMultiplier *
@@ -1172,7 +1193,7 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
     let shadowStacks = 0;
     let omniReady = false;
     let omniUsed = 0;
-    const omniLimit = Math.max(0, Number(byId(prefix, "omniTriggerLimit").value || 0));
+    const omniLimit = equip.hasOmni ? Math.max(0, Number(byId(prefix, "omniTriggerLimit").value || 0)) : 0;
 
     actions.forEach((action, index) => {
       if (action === "none") return;
@@ -1180,6 +1201,11 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
       let rawParts = [];
       let expectedParts = [];
       let notes = [];
+
+      currentFenrirActive = equip.hasFenrir && enemyRemainingHp < enemyHalfHp;
+      if (currentFenrirActive) {
+        notes.push("王者之劍：此段出手前對手血量已低於 50%，本段傷害額外 +30%");
+      }
 
       if (action === "s1") {
         const raw = skill1Base[skill1Lv] + 0.85 * extraAttack;
@@ -1296,13 +1322,15 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
       const expectedTotal = expectedParts.reduce((sum, value) => sum + value, 0);
 
       totalDamage += expectedTotal;
+      enemyRemainingHp = Math.max(0, enemyRemainingHp - expectedTotal);
 
       rows.push({
         index: index + 1,
         action: getActionName(action),
         notes: notes.join("<br>"),
         raw: rawTotal,
-        expected: expectedTotal
+        expected: expectedTotal,
+        afterHp: enemyRemainingHp
       });
     });
 
@@ -1344,7 +1372,7 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
       arcana,
       enchant,
       totalDamage,
-      enemyHp: enemy.hp,
+      enemy,
       rows,
       warnings
     });
@@ -1361,6 +1389,10 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
   }
 
   function outputStats(prefix, data) {
+    byId(prefix, "enemyHpDisplay").textContent = Math.round(data.enemy.hp);
+    byId(prefix, "enemyArmorDisplay").textContent = Math.round(data.enemy.armor);
+    byId(prefix, "enemyMagicDefenseDisplay").textContent = Math.round(data.enemy.magicDefense);
+
     byId(prefix, "baseAttackOut").textContent = round1(data.baseAttack);
     byId(prefix, "extraAttackOut").textContent = round1(data.extraAttack);
     byId(prefix, "totalAttackOut").textContent = round1(data.totalAttack);
@@ -1377,7 +1409,7 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
     byId(prefix, "equipCooldownOut").textContent = percentText(data.equip.cooldown);
     byId(prefix, "equipHpOut").textContent = round1(data.equip.hp);
     byId(prefix, "equipPierceOut").textContent = round1(data.equip.flatPierce);
-    byId(prefix, "equipDamageBonusOut").textContent = percentText(data.equip.damageBonus);
+    byId(prefix, "equipDamageBonusOut").textContent = data.equip.hasFenrir ? "低於50% +30%" : "0%";
 
     byId(prefix, "arcanaAttackOut").textContent = round1(data.arcana.attack);
     byId(prefix, "arcanaCritOut").textContent = percentText(data.arcana.critRate);
@@ -1391,9 +1423,9 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
     byId(prefix, "totalDamageOut").textContent = Math.round(data.totalDamage);
 
     byId(prefix, "killCheckOut").textContent =
-      data.totalDamage >= data.enemyHp
-        ? `對手估計生命值約 ${Math.round(data.enemyHp)}。這套期望傷害約 ${Math.round(data.totalDamage)}，理論上足以擊殺。`
-        : `對手估計生命值約 ${Math.round(data.enemyHp)}。這套期望傷害約 ${Math.round(data.totalDamage)}，理論上還差 ${Math.round(data.enemyHp - data.totalDamage)} 傷害。`;
+      data.totalDamage >= data.enemy.hp
+        ? `對手估計生命值約 ${Math.round(data.enemy.hp)}。這套期望傷害約 ${Math.round(data.totalDamage)}，理論上足以擊殺。`
+        : `對手估計生命值約 ${Math.round(data.enemy.hp)}。這套期望傷害約 ${Math.round(data.totalDamage)}，理論上還差 ${Math.round(data.enemy.hp - data.totalDamage)} 傷害。`;
 
     const tbody = byId(prefix, "damageBreakdown");
     tbody.innerHTML = "";
@@ -1407,6 +1439,7 @@ max(0, 原始傷害 × 防禦承傷倍率 × 傷害增加倍率 × 降傷/減傷
         <td class="left">${row.notes}</td>
         <td>${Math.round(row.raw)}</td>
         <td>${Math.round(row.expected)}</td>
+        <td>${Math.round(row.afterHp)}</td>
       `;
 
       tbody.appendChild(tr);
