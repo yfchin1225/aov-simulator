@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>傳說對決模擬器 v7.4</title>
+<style>
+body{font-family:Arial,"Microsoft JhengHei",sans-serif;background:#f4f6f8;margin:0;padding:20px;color:#222}h1{text-align:center;margin:0 0 18px}h2,h3{margin-top:0}.container{max-width:1700px;margin:0 auto}.summary,.build{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.08)}.summary{margin-bottom:18px}.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}@media(max-width:1100px){.layout{grid-template-columns:1fr}}.title{position:sticky;top:0;background:#fff;z-index:5;padding:8px 0 12px;margin-bottom:14px;border-bottom:1px solid #ddd}.section{border:1px solid #e5e5e5;border-radius:12px;padding:14px;margin-bottom:14px;background:#fafafa}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;align-items:end}.combo{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:7px}label{display:block;font-weight:bold;margin-bottom:5px;font-size:13px}select,input{width:100%;box-sizing:border-box;padding:8px;font-size:14px;border:1px solid #bbb;border-radius:8px;background:#fff}table{border-collapse:collapse;width:100%;background:#fff;margin-top:10px}th,td{border:1px solid #ddd;padding:7px;text-align:center;font-size:13px;vertical-align:top}th{background:#eef1f5}.left{text-align:left}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px}.tile{border:1px solid #ddd;border-radius:10px;padding:10px;background:#fff}.tile .n{color:#666;font-size:12px}.tile .v{font-size:18px;font-weight:bold;margin-top:4px}.result{font-size:28px;font-weight:bold;color:#b00020}.small{color:#666;font-size:12px;line-height:1.6}.warn{color:#b00020;font-weight:bold;font-size:13px;line-height:1.6}.hide{display:none}.formula{background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px;font-family:Consolas,monospace;font-size:12px;white-space:pre-wrap;line-height:1.6}.formula-detail{line-height:1.8;font-size:12.5px}.formula-title{font-weight:800;color:#7c2d12;background:#ffedd5;padding:1px 6px;border-radius:6px}.note-title{font-weight:800;color:#075985;background:#e0f2fe;padding:1px 6px;border-radius:6px}.formula-extra{display:block;margin-top:4px;color:#475569}.breakdown-box{margin-top:12px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:10px;line-height:1.7;font-size:12.5px}.breakdown-row{margin:6px 0}.breakdown-title{font-weight:800;color:#0f172a;background:#e2e8f0;padding:1px 6px;border-radius:6px}.breakdown-part{color:#1d4ed8;font-weight:700}.breakdown-eq{color:#64748b}.equip-summary-row{margin:6px 0;padding:6px 8px;border-left:3px solid #cbd5e1;background:#f8fafc;border-radius:6px}.equip-summary-total{margin-top:10px;padding:8px;border:1px solid #cbd5e1;background:#fff;border-radius:8px;font-weight:700}.equip-name{font-weight:800;color:#7c2d12}.build>.section{transition:min-height .12s ease}.reset-btn{width:100%;box-sizing:border-box;padding:9px;font-size:14px;border:1px solid #94a3b8;border-radius:8px;background:#e2e8f0;cursor:pointer;font-weight:700}.reset-btn:hover{background:#cbd5e1}.clear-equip-btn{margin-bottom:8px;padding:9px 12px;border:1px solid #b91c1c;border-radius:8px;background:#fee2e2;color:#991b1b;font-weight:800;cursor:pointer}.clear-equip-btn:hover{background:#fecaca}.detail-defense{color:#047857;font-weight:700}.detail-increase{color:#b45309;font-weight:700}.detail-reduction{color:#7e22ce;font-weight:700}.term-raw{color:#1d4ed8;font-weight:700}.term-defense{color:#047857;font-weight:700}.term-increase{color:#b45309;font-weight:700}.term-reduction{color:#7e22ce;font-weight:700}.term-fixed{color:#be123c;font-weight:700}.term-crit{color:#dc2626;font-weight:700}.term-result{color:#0f172a;font-weight:900;background:#e2e8f0;padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>傳說對決模擬器 v7.4</h1>
+<div class="summary"><h2>總比較</h2><table><tr><th>項目</th><th>A 組</th><th>B 組</th><th>A - B</th></tr><tr><td>總物攻</td><td id="cmp_a_atk">0</td><td id="cmp_b_atk">0</td><td id="cmp_d_atk">0</td></tr><tr><td>總魔攻</td><td id="cmp_a_mag">0</td><td id="cmp_b_mag">0</td><td id="cmp_d_mag">0</td></tr><tr><td>暴擊率</td><td id="cmp_a_crit">0%</td><td id="cmp_b_crit">0%</td><td id="cmp_d_crit">0%</td></tr><tr><td>物理穿透</td><td id="cmp_a_pp">0</td><td id="cmp_b_pp">0</td><td id="cmp_d_pp">0</td></tr><tr><td>魔法穿透</td><td id="cmp_a_mp">0</td><td id="cmp_b_mp">0</td><td id="cmp_d_mp">0</td></tr><tr><td>一套期望傷害</td><td id="cmp_a_dmg">0</td><td id="cmp_b_dmg">0</td><td id="cmp_d_dmg">0</td></tr></table><p class="small">更改 A 組我方等級時，A 對手、B 我方、B 對手會同步成同等級；同步後仍可手動改各自等級。</p></div>
+<div class="layout"><div id="buildA" class="build"></div><div id="buildB" class="build"></div></div>
+<div class="summary"><h2>目前重要規則</h2><div class="formula">物理傷害 → 使用最終物防計算減免
+魔法傷害 → 使用最終魔防計算減免
+真實傷害 → 不吃防禦
+
+最終防禦 = max(0, (((防禦力 - 固定降防) × (1 - 百分比降防)) - 固定穿透) × (1 - 百分比穿透))
+承傷倍率 = 600 / (600 + 最終防禦)
+
+死亡詛咒：第 3 次技能/普攻命中時，立刻觸發第一段魔法傷害。第二段「目標已損生命值」魔法傷害，放在整套連招結束後再觸發。</div></div>
+</div>
+<script>
+const heroes={nakroth:{name:"納克羅斯",attack:172,attackGrowth:15.3,magicPower:0,magicGrowth:0,hp:3288,hpGrowth:260,armor:133,armorGrowth:20,magicDefense:80,magicDefenseGrowthTotal:135,critRate:0,critDamage:200,type:"melee"},kira:{name:"綺蘿",attack:165,attackGrowth:15,magicPower:0,magicGrowth:0,hp:3660,hpGrowth:282,armor:134,armorGrowth:20,magicDefense:80,magicDefenseGrowthTotal:135,critRate:0,critDamage:200,type:"melee",moveSpeed:380,attackSpeed:0,attackSpeedGrowth:3},suli:{name:"蘇離",attack:170,attackGrowth:15,magicPower:0,magicGrowth:0,hp:3500,hpGrowth:240,armor:135,armorGrowth:20,magicDefense:80,magicDefenseGrowthTotal:135,critRate:0,critDamage:200,type:"ranged"}};
+const enemies={yuanMarksman:{name:"元流之子・射手",hp:3500,hpGrowth:260,armor:150,armorGrowth:21,magicDefense:80,magicDefenseGrowthTotal:189}};
+const equipments=[{id:"none",name:"未選擇",category:"未選擇"},{id:"curseBlade",name:"詛咒之刃",category:"打野",magicPower:150,cooldown:5,moveSpeed:7,passives:["curseBlade","curseHunt"]},{id:"soulreaver",name:"狩魂之劍",category:"打野",attack:140,cooldown:10,flatPierce:60},{id:"rankbreaker",name:"破陣戰矛",category:"攻擊",attack:110,scalingPierce:true},
+{id:"deathScythe",name:"死神鐮刀",category:"攻擊",attack:75,attackSpeed:15,hp:500,passives:["deathScythe"]},
+{id:"frostHammer",name:"極霜重錘",category:"攻擊",attack:60,attackSpeed:30,hp:900,passives:["frostHammer"]},
+{id:"morningStar",name:"晨星",category:"攻擊",attack:50,attackSpeed:30,critRate:10,passives:["morningStar"]},
+{id:"muramasaBlade",name:"天叢雲之刃",category:"攻擊",attack:80,cooldown:10,hp:500,percentPhysPierce:35},{id:"omniArms",name:"全能武器",category:"攻擊",attack:70,attackSpeed:15,cooldown:10,hp:600,passives:["omni"]},{id:"fenrir",name:"王者之劍",category:"攻擊",attack:180,cooldown:5,passives:["fenrir"]},{id:"claves",name:"聖劍",category:"攻擊",attack:100,critRate:25,critDamageBonus:40,passives:["claves"]},{id:"voidBlade",name:"碎空長刃",category:"攻擊",attack:100,cooldown:10,hp:500},{id:"sorcererBoots",name:"術士短靴",category:"移動",moveSpeedFlat:60,magicPierce:100},{id:"oracleBook",name:"神諭書",category:"魔法",magicPower:80},{id:"manaScroll",name:"法力卷軸",category:"魔法",magicPower:120},{id:"twilightBlade",name:"暮光之刃",category:"魔法",magicPower:180,attackSpeed:20,moveSpeed:5,passives:["twilight"]},{id:"hecateCrown",name:"巫妖皇冠",category:"魔法",magicPower:240,passives:["hecate"]},{id:"frostGuard",name:"極寒之護",category:"魔法",magicPower:140,cooldown:5,hp:600,passives:["frostGuard"]},{id:"holyCodex",name:"神聖法典",category:"魔法",magicPower:350,cooldown:10,passives:["holyCodex"]},{id:"chaosStaff",name:"混沌法杖",category:"魔法",magicPower:180,cooldown:10,percentMagicPierce:40},{id:"frostOrb",name:"凝霜寶珠",category:"魔法",magicPower:200,magicLifesteal:12,passives:["frostOrb"]},{id:"magisterRobe",name:"魔導師罩袍",category:"魔法",magicPower:120,hp:900,passives:["magisterRobe"]}];
+const arcanaOptions={red:[{id:"none",name:"無"},{id:"rage",name:"暴怒",critRate:1.6},{id:"onslaught",name:"猛攻",attack:2,flatPierce:3.6},{id:"desolate",name:"荒蕪",magicPower:4.2,magicPierce:2.4},{id:"sage",name:"賢者",magicPower:5.3}],purple:[{id:"none",name:"無"},{id:"reave",name:"奪萃",lifesteal:1.6},{id:"spirit",name:"精靈",moveSpeed:1,attackSpeed:1}],green:[{id:"none",name:"無"},{id:"dragonClaw",name:"龍爪",attack:0.9,flatPierce:6.4},{id:"stain",name:"玷污",magicPierce:6.4,attackSpeed:0.6}]};
+const nakS1=[0,250,270,290,310,330,350],nakS2=[0,150,180,210,240,270,300],nakS3=[0,220,270,320];
+const kiraS1=[0,100,120,140,160,180,200],kiraS2Path=[0,75,90,105,120,135,150],kiraS2Tri=[0,400,440,480,520,560,600];
+const suliS1=[0,250,300,350,400,450,500],suliS2=[0,250,300,350,400,450,500],suliS3Cd=[0,25,22.5,20];
+const state={A:null,B:null};
+function r1(x){return Math.round(x*10)/10}function r2(x){return Math.round(x*100)/100}function r4(x){return Math.round(x*10000)/10000}function fmtNum(x){return Number.isFinite(x)?r2(x):0}function fmtMult(x){return Number.isFinite(x)?r4(x):0}function fmtPctDecimal(x){return Number.isFinite(x)?r2(x*100)+"%":"0%"}function pct(x){return r1(x)+"%"}function span(cls,text){return `<span class="${cls}">${text}</span>`}function formulaTitle(text){return span("formula-title",text)}function noteTitle(text){return span("note-title",text)}function el(p,n){return document.getElementById(p+"_"+n)}function clampPct(v){return Math.min(100,Math.max(0,Number(v||0)))}function rankbreakerPierce(level){return 40+10*(level-1)}function holyVerdictPierce(level){return 15+3*level}function demonClawAtk(level){return 10+2*(level-1)}function demonClawMag(level){return 15+3*(level-1)}function magisterRobeBaseMagicPower(level){return 26+(level-1)}function magisterRobeBaseMagicPierce(level){return 32+2*(level-1)}function magisterRobeBonusMagicPower(level,extraHp){return Math.min(100,magisterRobeBaseMagicPower(level)+0.02*extraHp)}function magisterRobeBonusMagicPierce(level,extraHp){return Math.min(150,magisterRobeBaseMagicPierce(level)+0.03*extraHp)}function frostHammerBaseDamage(level){return 140+10*(level-1)}
+function createBuild(id,p,title){document.getElementById(id).innerHTML=`
+<div class="title"><h2>${title}</h2><div>一套期望傷害：<span class="result" id="${p}_totalDamageOut">0</span></div></div>
+<div class="section"><h3>1. 英雄設定</h3><div class="grid"><div><label>英雄</label><select id="${p}_heroSelect"><option value="nakroth">納克羅斯</option><option value="kira">綺蘿</option><option value="suli">蘇離</option></select></div><div><label>我方等級</label><select id="${p}_heroLevel"></select></div><div><label>技能主升</label><select id="${p}_mainSkill"><option value="s1">主 1 技能</option><option value="s2">主 2 技能</option></select></div><div><label>一技能等級</label><select id="${p}_s1Lv"></select></div><div><label>二技能等級</label><select id="${p}_s2Lv"></select></div><div><label>三技能等級</label><select id="${p}_s3Lv"></select></div><div id="${p}_basicStackBox"><label>起手普攻層數</label><select id="${p}_basicStack"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3：下一下觸發第四下</option></select></div></div><div id="${p}_kiraBox" class="section" style="margin-top:12px;display:none;"><h3>綺蘿特殊設定</h3><div class="grid"><div><label>1技能內圈雙倍</label><select id="${p}_kiraS1Double"><option value="yes" selected>是</option><option value="no">否</option></select></div><div><label>標記單位觸發殘影記錄傷害</label><select id="${p}_kiraRecord"><option value="yes">是</option><option value="no">否</option></select></div><div><label>2技能路徑命中次數</label><select id="${p}_kiraPathHits"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select></div><div><label>2技能命中三角爆發</label><select id="${p}_kiraTriangle"><option value="yes">是</option><option value="no">否</option></select></div></div><p class="small">綺蘿預設連招：1技能 + 2技能 + 普攻 + 普攻 + 普攻 + 1技能二段。</p></div><div id="${p}_suliBox" class="section" style="margin-top:12px;display:none;"><h3>蘇離特殊設定</h3><div class="grid"><div><label>1技能形態</label><select id="${p}_suliS1Form"><option value="melee">近戰：突進普攻追加傷害</option><option value="ranged" selected>遠程：血箭直傷</option></select></div><div><label>2技能形態</label><select id="${p}_suliS2Form"><option value="melee">近戰：扇形掃擊</option><option value="ranged" selected>遠程：破陣箭矢（雙倍傷害）</option></select></div></div><p class="small">蘇離內容：已加入被動【血祭】、1技能近戰/遠程、2技能近戰/遠程，以及 3 技能後普攻三箭 55% 傷害。蘇離預設主升 2 技能；1 技能屬於位移，會疊影刃。蘇離沒有一技能二段。基礎屬性目前先用暫定值，若你之後提供官方基礎屬性，我可以再幫你校正。</p></div></div>
+<div class="section"><h3>2. 裝備選擇</h3>
+    <button type="button" id="${p}_clearEquipments" class="clear-equip-btn">一鍵清除所有裝備</button>
+    <p class="small">按下後，6 格裝備都會變成「未選擇」。A 組按下時會同步清除 B 組；B 組按下時只清除 B 組。</p>
+    <div class="grid" id="${p}_equipSlots"></div><div id="${p}_omniBox" class="section hide"><label>全能武器觸發幾次</label><input id="${p}_omniLimit" type="number" min="0" max="10" value="1"></div><div id="${p}_curseBox" class="section hide"><label>詛咒之刃獵殺層數 0～25</label><input id="${p}_curseStacks" type="number" min="0" max="25" value="25"><label style="margin-top:10px;">詛咒之刃元素之力觸發幾次</label><input id="${p}_curseLimit" type="number" min="0" max="10" value="1"><p class="small">獵殺：每層 +4 魔攻、+0.2% 冷卻，初始滿層 25。元素之力有冷卻，這裡由玩家輸入整套連招預計觸發幾次。</p></div>
+<div id="${p}_frostHammerBox" class="section hide"><label>極霜重錘「寒傷」觸發幾次</label><input id="${p}_frostHammerLimit" type="number" min="0" max="10" value="1"><p class="small">寒傷：普攻和技能額外造成 140～280（+45% 額外物理加成）物理傷害，冷卻約 3 秒。這裡由玩家輸入整套連招預計觸發幾次。</p></div></div>
+<div class="section">
+  <h3>已選裝備屬性</h3>
+  <div id="${p}_equipmentSummaryText" class="small">尚未選擇裝備。</div>
+</div>
+<div class="section"><h3>3. 奧義</h3><p class="small">紅色奧義，合計最多 10 顆</p><div class="grid" id="${p}_redArcana"></div><p class="small">紫色奧義，合計最多 10 顆</p><div class="grid" id="${p}_purpleArcana"></div><p class="small">綠色奧義，合計最多 10 顆</p><div class="grid" id="${p}_greenArcana"></div>
+    <p id="${p}_arcanaWarn" class="warn"></p>
+    <div class="section" style="background:#fff;margin-top:12px;">
+      <h3>30顆奧義總加成</h3>
+      <p id="${p}_arcanaTotalText" class="small">尚未計算</p>
+    </div></div>
+<div class="section"><h3>4. 魔紋</h3><div class="grid">
+  <div><label>主魔紋 I</label><select id="${p}_enchantTop1">
+    <option value="none">無</option>
+    <optgroup label="魔能深淵">
+      <option value="magicFlame">魔炎</option>
+      <option value="shadowBlade">影刃</option>
+    </optgroup>
+    <optgroup label="光明聖殿">
+      <option value="sacrificeAxe_main1">犧牲之斧</option>
+    </optgroup>
+  </select></div>
+
+  <div><label>主魔紋 II</label><select id="${p}_enchantTop2">
+    <option value="none">無</option>
+    <optgroup label="魔能深淵">
+      <option value="demonClaw">鬼爪</option>
+    </optgroup>
+    <optgroup label="光明聖殿">
+      <option value="holyVerdict_main2">聖決</option>
+    </optgroup>
+  </select></div>
+
+  <div><label>主魔紋 III</label><select id="${p}_enchantTop3">
+    <option value="none">無</option>
+    <optgroup label="魔能深淵">
+      <option value="deathCurse">死亡詛咒</option>
+    </optgroup>
+  </select></div>
+
+  <div><label>副魔紋 I</label><select id="${p}_enchantBottom1">
+    <option value="none">無</option>
+    <optgroup label="魔能深淵">
+      <option value="magicFlame_sub1">魔炎</option>
+      <option value="shadowBlade_sub1">影刃</option>
+    </optgroup>
+    <optgroup label="光明聖殿">
+      <option value="sacrificeAxe">犧牲之斧</option>
+    </optgroup>
+  </select></div>
+
+  <div><label>副魔紋 II</label><select id="${p}_enchantBottom2">
+    <option value="none">無</option>
+    <optgroup label="魔能深淵">
+      <option value="demonClaw_sub2">鬼爪</option>
+    </optgroup>
+    <optgroup label="光明聖殿">
+      <option value="holyVerdict">聖決</option>
+    </optgroup>
+  </select></div>
+</div>
+
+</div>
+<div class="section"><h3>5. 對手與防禦設定</h3><div class="grid"><div><label>對手英雄</label><select id="${p}_enemySelect"><option value="yuanMarksman">元流之子・射手</option></select></div><div><label>對手等級</label><select id="${p}_enemyLevel"></select></div><div><label>固定降防</label><input id="${p}_fixedDefRed" type="number" value="0"></div><div><label>百分比降防 %</label><input id="${p}_pctDefRed" type="number" value="0"></div><div><label>額外百分比物穿 %</label><input id="${p}_extraPctPhysPierce" type="number" value="0"></div><div><label>額外百分比魔穿 %</label><input id="${p}_extraPctMagPierce" type="number" value="0"></div><div><label>百分比降傷 %</label><input id="${p}_pctDmgDown" type="number" value="0"></div><div><label>百分比減傷總和 %</label><input id="${p}_pctDmgRed" type="number" value="0"></div><div><label>特殊減傷 %</label><input id="${p}_specialRed" type="number" value="0"></div><div><label>固定減傷</label><input id="${p}_fixedDmgRed" type="number" value="0"></div></div><h3 style="margin-top:14px;">對手目前等級屬性</h3>
+<p class="small">上排保留依照對手與等級自動算出的原始值；下方「實際套用值」可以自由調整，傷害計算會使用實際套用值。</p>
+<div class="tiles">
+  <div class="tile"><div class="n">原始生命值</div><div class="v" id="${p}_enemyHp">0</div></div>
+  <div class="tile"><div class="n">原始物理防禦</div><div class="v" id="${p}_enemyArmor">0</div></div>
+  <div class="tile"><div class="n">原始魔法防禦</div><div class="v" id="${p}_enemyMdef">0</div></div>
+</div>
+<h3 style="margin-top:14px;">實際套用值</h3>
+<div class="grid">
+  <div><label>實際生命值</label><input id="${p}_enemyHpInput" type="number" min="0" value="0"></div>
+  <div><label>實際物理防禦</label><input id="${p}_enemyArmorInput" type="number" value="0"></div>
+  <div><label>實際魔法防禦</label><input id="${p}_enemyMdefInput" type="number" value="0"></div>
+  <div><label>返回原始計算值</label><button type="button" id="${p}_resetEnemyStats" class="reset-btn">一鍵返回原始計算值</button></div>
+</div></div>
+<div class="section"><h3>6. 連招設定</h3><div class="combo" id="${p}_comboSlots"></div></div>
+<div class="section"><h3>7. 總屬性</h3><div class="tiles"><div class="tile"><div class="n">總物攻</div><div class="v" id="${p}_totalAtk">0</div></div><div class="tile"><div class="n">額外物攻</div><div class="v" id="${p}_extraAtk">0</div></div><div class="tile"><div class="n">總魔攻</div><div class="v" id="${p}_totalMag">0</div></div><div class="tile"><div class="n">暴擊率</div><div class="v" id="${p}_critRate">0%</div></div><div class="tile"><div class="n">暴擊傷害</div><div class="v" id="${p}_critDmg">200%</div></div><div class="tile"><div class="n">冷卻縮減</div><div class="v" id="${p}_cooldown">0%</div></div><div class="tile"><div class="n">物理穿透</div><div class="v" id="${p}_physPierce">0</div></div><div class="tile"><div class="n">魔法穿透</div><div class="v" id="${p}_magPierce">0</div></div><div class="tile"><div class="n">魔法吸血</div><div class="v" id="${p}_magicLifesteal">0%</div></div><div class="tile"><div class="n">對手最終物防</div><div class="v" id="${p}_finalArmor">0</div></div><div class="tile"><div class="n">對手最終魔防</div><div class="v" id="${p}_finalMdef">0</div></div></div>
+<div class="breakdown-box">
+  <h3>總屬性來源拆解</h3>
+  <div id="${p}_statBreakdown">尚未計算</div>
+</div></div>
+<div class="section"><h3>8. 逐段傷害</h3><p id="${p}_killText" class="small"></p><table><thead><tr><th>順序</th><th>動作</th><th>類型</th><th>說明與公式</th><th>最終期望傷害</th><th>傷後血量</th></tr></thead><tbody id="${p}_rows"></tbody></table><p id="${p}_warn" class="warn"></p></div>`;initBuild(p)}
+function initBuild(p){for(let i=1;i<=15;i++){el(p,"heroLevel").appendChild(new Option(i+" 等",i));el(p,"enemyLevel").appendChild(new Option(i+" 等",i))}el(p,"heroLevel").value=8;el(p,"enemyLevel").value=8;fillSkill(p,"s1Lv",6,false);fillSkill(p,"s2Lv",6,false);fillSkill(p,"s3Lv",3,true);createEquips(p);createArcana(p,"red");createArcana(p,"purple");createArcana(p,"green");createCombo(p);el(p,"basicStack").value=3;el(p,"kiraS1Double").value="yes";el(p,"suliS1Form").value="ranged";el(p,"suliS2Form").value="ranged";setEquipDefaults(p,[]);setDefaultArcanaByHero(p);el(p,"enchantTop1").value="shadowBlade";el(p,"enchantTop2").value="demonClaw";el(p,"enchantTop3").value="deathCurse";el(p,"enchantBottom1").value="sacrificeAxe";el(p,"enchantBottom2").value="holyVerdict";applyHeroDefaultSettings(p);defaultComboForHero(p);resetEnemyInputsToBase(p);el(p,"resetEnemyStats").addEventListener("click",()=>{resetEnemyInputsToBase(p);calculate(p)});
+  el(p,"clearEquipments").addEventListener("click",()=>{
+    clearEquipments(p);
+
+    if(p==="A"){
+      clearEquipments("B");
+      calculate("A");
+      calculate("B");
+    }else{
+      calculate(p);
+    }
+  });
+  document.querySelectorAll(`#build${p} select,#build${p} input`).forEach(x=>{x.addEventListener("change",()=>handleChange(p,x));x.addEventListener("input",()=>handleChange(p,x))});
+  calculate(p)
+}
+function fillSkill(p,id,max,zero){const s=el(p,id);if(zero)s.appendChild(new Option("0 等 / 未學",0));for(let i=1;i<=max;i++)s.appendChild(new Option(i+" 等",i))}function createEquips(p){const c=el(p,"equipSlots");const groups=["打野","攻擊","移動","魔法"];for(let i=1;i<=6;i++){const w=document.createElement("div");w.innerHTML=`<label>裝備 ${i}</label>`;const s=document.createElement("select");s.className=p+"_equip";s.appendChild(new Option("未選擇","none"));groups.forEach(g=>{const og=document.createElement("optgroup");og.label=g;equipments.filter(it=>it.category===g).forEach(it=>og.appendChild(new Option(it.name,it.id)));s.appendChild(og)});w.appendChild(s);c.appendChild(w)}}function setEquipDefaults(p,ids){document.querySelectorAll("."+p+"_equip").forEach((s,i)=>s.value=ids[i]||"none")}function createArcana(p,color){const c=el(p,color+"Arcana");for(let i=1;i<=3;i++){const w=document.createElement("div");w.innerHTML=`<label>第 ${i} 組</label>`;const s=document.createElement("select");s.className=p+"_arcana";s.dataset.color=color;arcanaOptions[color].forEach(a=>s.appendChild(new Option(a.name,a.id)));const q=document.createElement("input");q.type="number";q.min=0;q.max=10;q.value=0;q.className=p+"_arcQty";q.dataset.color=color;w.appendChild(s);w.appendChild(q);c.appendChild(w)}}function setArc(p,color,row,id,qty){const ss=[...document.querySelectorAll("."+p+"_arcana")].filter(x=>x.dataset.color===color);const qs=[...document.querySelectorAll("."+p+"_arcQty")].filter(x=>x.dataset.color===color);ss[row].value=id;qs[row].value=qty}function createCombo(p){const c=el(p,"comboSlots");const opts=[["none","空格"],["bloodSacrifice","血祭"],["s1","1技能"],["s1b","1技能二段"],["s2","2技能"],["s3","3技能"],["aa","普攻"]];for(let i=1;i<=10;i++){const w=document.createElement("div");w.innerHTML=`<label>${i}</label>`;const s=document.createElement("select");s.className=p+"_combo";opts.forEach(o=>s.appendChild(new Option(o[1],o[0])));w.appendChild(s);c.appendChild(w)}}function setCombo(p,arr){document.querySelectorAll("."+p+"_combo").forEach((s,i)=>s.value=arr[i]||"none")}function defaultComboForHero(p){
+  const h=el(p,"heroSelect").value;
+  if(h==="kira"){
+    setCombo(p,["s1","s2","aa","aa","aa","s1b"]);
+  }else if(h==="suli"){
+    // 蘇離沒有一技能二段，預設：空格、2技能、3技能、普攻、普攻、普攻、普攻。
+    setCombo(p,["none","s2","s3","aa","aa","aa","aa","none","none","none"]);
+  }else{
+    setCombo(p,["s2","s1","aa","s3","aa"]);
+  }
+}
+
+function applyHeroDefaultSettings(p, resetSpecial=true){
+  const h = el(p,"heroSelect").value;
+
+  if(h==="suli"){
+    // 蘇離主 2 技能；8 等時會是 1 技能 2 等、2 技能 4 等、3 技能 2 等。
+    el(p,"mainSkill").value = "s2";
+    autoSkills(p);
+
+    // 只有切換到蘇離或初始化時才重設特殊設定。
+    // 改我方等級時不會自動改回預設，保留玩家手動選擇。
+    if(resetSpecial){
+      el(p,"suliS1Form").value = "ranged";
+      el(p,"suliS2Form").value = "ranged";
+    }
+  }else{
+    autoSkills(p);
+  }
+}
+function setDefaultArcanaByHero(p){
+  const h = el(p,"heroSelect").value;
+
+  if(h === "kira"){
+    // 綺蘿預設：暴怒、精靈、玷污；玩家後續仍可自行調整。
+    setArc(p,"red",0,"rage",10);
+    setArc(p,"purple",0,"spirit",10);
+    setArc(p,"green",0,"stain",10);
+  }else if(h === "suli"){
+    // 蘇離預設：猛攻、奪萃、龍爪。
+    // 合計：物理攻擊 +29、物理穿透 +100、物理吸血 +16%。
+    setArc(p,"red",0,"onslaught",10);
+    setArc(p,"purple",0,"reave",10);
+    setArc(p,"green",0,"dragonClaw",10);
+  }else{
+    setArc(p,"red",0,"rage",10);
+    setArc(p,"purple",0,"reave",10);
+    setArc(p,"green",0,"dragonClaw",10);
+  }
+
+  ["red","purple","green"].forEach(color=>{
+    setArc(p,color,1,"none",0);
+    setArc(p,color,2,"none",0);
+  });
+}
+
+
+function clearEquipments(prefix){
+  document.querySelectorAll("." + prefix + "_equip").forEach(select => {
+    select.value = "none";
+  });
+}
+
+function syncOneEquipmentFromA(changedSelect){
+  const aEquips = [...document.querySelectorAll(".A_equip")];
+  const bEquips = [...document.querySelectorAll(".B_equip")];
+  const index = aEquips.indexOf(changedSelect);
+
+  if(index >= 0 && bEquips[index]){
+    bEquips[index].value = changedSelect.value;
+  }
+}
+
+function syncOneComboFromA(changedSelect){
+  const aCombos = [...document.querySelectorAll(".A_combo")];
+  const bCombos = [...document.querySelectorAll(".B_combo")];
+  const index = aCombos.indexOf(changedSelect);
+
+  if(index >= 0 && bCombos[index]){
+    bCombos[index].value = changedSelect.value;
+  }
+}
+
+function syncSuliSpecialFromA(changedInput){
+  const targetId = changedInput.id.replace("A_", "B_");
+  const target = document.getElementById(targetId);
+  if(target){
+    target.value = changedInput.value;
+  }
+}
+
+function syncEnchantFromA(changedInput){
+  const targetId = changedInput.id.replace("A_", "B_");
+  const target = document.getElementById(targetId);
+  if(target){
+    target.value = changedInput.value;
+  }
+}
+
+function handleChange(p,input){
+  if(input.id==="A_heroLevel"){
+    syncLevels();
+    resetEnemyInputsToBase("A");
+    resetEnemyInputsToBase("B");
+    applyHeroDefaultSettings("A", false);
+    applyHeroDefaultSettings("B", false);
+    calculate("A");
+    calculate("B");
+    return;
+  }
+
+  if(input.id==="A_heroSelect"){
+    el("B","heroSelect").value = el("A","heroSelect").value;
+
+    defaultComboForHero("A");
+    defaultComboForHero("B");
+
+    setDefaultArcanaByHero("A");
+    setDefaultArcanaByHero("B");
+
+    applyHeroDefaultSettings("A", false);
+    applyHeroDefaultSettings("B", false);
+
+    calculate("A");
+    calculate("B");
+    return;
+  }
+
+  // 更改 A 組第 N 格裝備時，只同步 B 組第 N 格。
+  // 不會同步其他格；B 組之後仍可手動改成其他裝備。
+  if(input.classList && input.classList.contains("A_equip")){
+    syncOneEquipmentFromA(input);
+    calculate("A");
+    calculate("B");
+    return;
+  }
+
+  // 更改 A 組第 N 格連招時，只同步 B 組第 N 格。
+  // B 組連招不會被鎖定，之後仍可手動改成其他招式。
+  if(input.classList && input.classList.contains("A_combo")){
+    syncOneComboFromA(input);
+    calculate("A");
+    calculate("B");
+    return;
+  }
+
+  // 蘇離特殊設定也採用 A 改 B 同步，但 B 組之後仍可自己改。
+  if(input.id==="A_suliS1Form" || input.id==="A_suliS2Form"){
+    syncSuliSpecialFromA(input);
+    calculate("A");
+    calculate("B");
+    return;
+  }
+
+  // 魔紋也採用 A 改 B 同步，但 B 組之後仍可自己改。
+  if(input.id==="A_enchantTop1" || input.id==="A_enchantTop2" || input.id==="A_enchantTop3" || input.id==="A_enchantBottom1" || input.id==="A_enchantBottom2"){
+    syncEnchantFromA(input);
+    calculate("A");
+    calculate("B");
+    return;
+  }
+
+  if(input.id===p+"_heroSelect"){
+    applyHeroDefaultSettings(p);
+    defaultComboForHero(p);
+    setDefaultArcanaByHero(p);
+  }else if(input.id===p+"_heroLevel"||input.id===p+"_mainSkill"){
+    autoSkills(p);
+  }
+
+  if(input.id===p+"_enemyLevel" || input.id===p+"_enemySelect"){
+    resetEnemyInputsToBase(p);
+  }
+
+  calculate(p);
+}function syncLevels(){const lv=el("A","heroLevel").value;el("A","enemyLevel").value=lv;el("B","heroLevel").value=lv;el("B","enemyLevel").value=lv}function autoSkills(p){const lv=Number(el(p,"heroLevel").value),main=el(p,"mainSkill").value;let s={s1:0,s2:0,s3:0};const a1=["s1","s2","s1","s3","s1","s2","s1","s3","s1","s2","s1","s3","s2","s2","s2"];const a2=["s2","s1","s2","s3","s2","s1","s2","s3","s2","s1","s2","s3","s1","s1","s1"];const arr=main==="s1"?a1:a2;for(let i=0;i<lv;i++)s[arr[i]]++;el(p,"s1Lv").value=s.s1;el(p,"s2Lv").value=s.s2;el(p,"s3Lv").value=s.s3}
+function baseHeroStats(heroId,level){const h=heroes[heroId];return{attack:h.attack+h.attackGrowth*(level-1),magicPower:h.magicPower+h.magicGrowth*(level-1),hp:h.hp+h.hpGrowth*(level-1),armor:h.armor+h.armorGrowth*(level-1),mdef:h.magicDefense+h.magicDefenseGrowthTotal/14*(level-1),critRate:h.critRate,critDamage:h.critDamage,type:h.type}}function enemyBaseStats(p){const lv=Number(el(p,"enemyLevel").value),e=enemies[el(p,"enemySelect").value];return{hp:e.hp+e.hpGrowth*(lv-1),armor:e.armor+e.armorGrowth*(lv-1),mdef:e.magicDefense+e.magicDefenseGrowthTotal/14*(lv-1)}}
+function resetEnemyInputsToBase(p){const b=enemyBaseStats(p);el(p,"enemyHpInput").value=Math.round(b.hp);el(p,"enemyArmorInput").value=r1(b.armor);el(p,"enemyMdefInput").value=r1(b.mdef)}
+function enemyStats(p){const b=enemyBaseStats(p);return{baseHp:b.hp,baseArmor:b.armor,baseMdef:b.mdef,hp:Number(el(p,"enemyHpInput").value||b.hp),armor:Number(el(p,"enemyArmorInput").value||b.armor),mdef:Number(el(p,"enemyMdefInput").value||b.mdef)}}function equipStats(p,level,heroId){
+  const ids=[...document.querySelectorAll("."+p+"_equip")].map(x=>x.value);
+  const st={attack:0,magicPower:0,attackSpeed:0,critRate:0,cooldown:0,hp:0,flatPierce:0,magicPierce:0,percentPhysPierce:0,percentMagicPierce:0,critDamageBonus:0,moveSpeed:0,magicLifesteal:0,hasOmni:false,hasFenrir:false,hasCurse:false,hasTwilight:false,hasHecate:false,hasHolyCodex:false,hasMageRobe:false,hasFrostHammer:false,hasMorningStar:false,mageRobeBonusMagicPower:0,mageRobeBonusMagicPierce:0,ids};
+  const heroType=(heroes[heroId]||{}).type||"melee";
+  ids.forEach(id=>{
+    const it=equipments.find(x=>x.id===id)||{};
+    st.attack+=it.attack||0;
+    st.magicPower+=it.magicPower||0;
+    st.attackSpeed+=it.attackSpeed||0;
+    st.critRate+=it.critRate||0;
+    st.cooldown+=it.cooldown||0;
+    st.hp+=it.hp||0;
+    st.flatPierce+=it.flatPierce||0;
+    st.magicPierce+=it.magicPierce||0;
+    st.percentPhysPierce+=it.percentPhysPierce||0;
+    st.percentMagicPierce+=it.percentMagicPierce||0;
+    st.critDamageBonus+=it.critDamageBonus||0;
+    st.moveSpeed+=it.moveSpeed||0;
+    st.magicLifesteal+=it.magicLifesteal||0;
+    if(it.scalingPierce)st.flatPierce+=rankbreakerPierce(level);
+    if((it.passives||[]).includes("omni"))st.hasOmni=true;
+    if((it.passives||[]).includes("fenrir"))st.hasFenrir=true;
+    if((it.passives||[]).includes("curseBlade"))st.hasCurse=true;
+    if((it.passives||[]).includes("twilight"))st.hasTwilight=true;
+    if((it.passives||[]).includes("hecate"))st.hasHecate=true;
+    if((it.passives||[]).includes("holyCodex"))st.hasHolyCodex=true;
+    if((it.passives||[]).includes("magisterRobe"))st.hasMageRobe=true;
+    if((it.passives||[]).includes("frostHammer"))st.hasFrostHammer=true;
+    if((it.passives||[]).includes("morningStar"))st.hasMorningStar=true;
+  });
+  if(st.hasMorningStar){
+    // 晨星：+20% 物理穿透，遠程英雄效果翻倍。
+    st.percentPhysPierce += heroType==="ranged" ? 40 : 20;
+  }
+  if(st.hasCurse){
+    const stacks=Math.min(25,Math.max(0,Number(el(p,"curseStacks").value||0)));
+    st.magicPower+=4*stacks;
+    st.cooldown+=0.2*stacks;
+  }
+  if(st.hasMageRobe){
+    st.mageRobeBonusMagicPower=magisterRobeBonusMagicPower(level,st.hp);
+    st.mageRobeBonusMagicPierce=magisterRobeBonusMagicPierce(level,st.hp);
+    st.magicPower+=st.mageRobeBonusMagicPower;
+    st.magicPierce+=st.mageRobeBonusMagicPierce;
+  }
+  return st
+}function arcStats(p){const st={attack:0,magicPower:0,critRate:0,flatPierce:0,magicPierce:0,lifesteal:0,attackSpeed:0,moveSpeed:0,counts:{red:0,purple:0,green:0}};const ss=document.querySelectorAll("."+p+"_arcana"),qs=document.querySelectorAll("."+p+"_arcQty");ss.forEach((s,i)=>{const col=s.dataset.color,qty=Number(qs[i].value||0),o=arcanaOptions[col].find(x=>x.id===s.value)||{};st.counts[col]+=qty;["attack","magicPower","critRate","flatPierce","magicPierce","lifesteal","attackSpeed","moveSpeed"].forEach(k=>st[k]+=(o[k]||0)*qty)});return st}function enchantStats(p,level){
+  const st={attack:0,magicPower:0,flatPierce:0,magicPierce:0,damageBonus:0,damageReduction:0,hasShadow:false,hasMagicFlame:false,hasDeathCurse:false};
+
+  const main1=el(p,"enchantTop1").value;
+  const main2=el(p,"enchantTop2").value;
+  const main3=el(p,"enchantTop3").value;
+  const sub1=el(p,"enchantBottom1").value;
+  const sub2=el(p,"enchantBottom2").value;
+
+  if(main1==="shadowBlade"||sub1==="shadowBlade_sub1")st.hasShadow=true;
+  if(main1==="magicFlame"||sub1==="magicFlame_sub1")st.hasMagicFlame=true;
+
+  if(main2==="demonClaw"||sub2==="demonClaw_sub2"){
+    st.attack+=demonClawAtk(level);
+    st.magicPower+=demonClawMag(level);
+  }
+
+  if(main3==="deathCurse")st.hasDeathCurse=true;
+
+  if(sub1==="sacrificeAxe"||main1==="sacrificeAxe_main1")st.damageBonus+=3;
+
+  if(sub2==="holyVerdict"||main2==="holyVerdict_main2"){
+    st.flatPierce+=holyVerdictPierce(level);
+    st.magicPierce+=holyVerdictPierce(level);
+  }
+
+  return st
+}
+function finalDefense(def,flatPierce,pctPierce,p){const fixed=Number(el(p,"fixedDefRed").value||0),pctRed=clampPct(el(p,"pctDefRed").value);return Math.max(0,((Math.max(0,(def-fixed)*(1-pctRed/100))-flatPierce)*(1-pctPierce/100)))}function actionName(a){return{none:"空格",bloodSacrifice:"血祭",s1:"1技能",s1b:"1技能二段",s2:"2技能",s3:"3技能",aa:"普攻"}[a]||a}
+function calculate(p){const warnings=[];const heroId=el(p,"heroSelect").value;const level=Number(el(p,"heroLevel").value);const hero=baseHeroStats(heroId,level),enemy=enemyStats(p),eq=equipStats(p,level,heroId),ar=arcStats(p),en=enchantStats(p,level);el(p,"kiraBox").style.display=heroId==="kira"?"block":"none";el(p,"suliBox").style.display=heroId==="suli"?"block":"none";el(p,"basicStackBox").style.display=heroId==="nakroth"?"block":"none";el(p,"omniBox").classList.toggle("hide",!eq.hasOmni);el(p,"curseBox").classList.toggle("hide",!eq.hasCurse);el(p,"frostHammerBox").classList.toggle("hide",!eq.hasFrostHammer);let rawMagic=hero.magicPower+eq.magicPower+ar.magicPower+en.magicPower;let totalMagic=eq.hasHecate?rawMagic*1.35:rawMagic;const extraAttack=eq.attack+ar.attack+en.attack,totalAttack=hero.attack+extraAttack;let critRate=Math.min(100,hero.critRate+eq.critRate+ar.critRate),critDamage=hero.critDamage+eq.critDamageBonus;let cooldown=Math.min(40,eq.cooldown);let damageBonus=en.damageBonus,damageReduction=0;if(eq.hasHolyCodex){const bonus=Math.floor(totalMagic/100)*0.5;damageBonus+=bonus;damageReduction+=bonus}const physPierce=eq.flatPierce+ar.flatPierce+en.flatPierce,magPierce=eq.magicPierce+ar.magicPierce+en.magicPierce,magicLifesteal=eq.magicLifesteal||0;const pctPhys=clampPct(Number(el(p,"extraPctPhysPierce").value||0)+eq.percentPhysPierce),pctMag=clampPct(Number(el(p,"extraPctMagPierce").value||0)+eq.percentMagicPierce);const finalArmor=finalDefense(enemy.armor,physPierce,pctPhys,p),finalMdef=finalDefense(enemy.mdef,magPierce,pctMag,p);const physMult=600/(600+finalArmor),magMult=600/(600+finalMdef);const reductionMultiplier=(1-clampPct(el(p,"pctDmgDown").value)/100)*(1-clampPct(el(p,"pctDmgRed").value)/100)*(1-clampPct(el(p,"specialRed").value)/100)*(1-damageReduction/100);const fixedDmgRed=Number(el(p,"fixedDmgRed").value||0);let enemyHp=enemy.hp,totalDamage=0,rows=[];let basicCounter=Number(el(p,"basicStack").value),skill2Buff=false,shadowStacks=0,omniReady=false,omniUsed=0,omniLimit=eq.hasOmni?Number(el(p,"omniLimit").value||0):0,curseBladeReady=false,curseBladeUsed=0,curseBladeLimit=eq.hasCurse?Number(el(p,"curseLimit").value||0):0,frostHammerUsed=0,frostHammerLimit=eq.hasFrostHammer?Number(el(p,"frostHammerLimit").value||0):0,curseReady=0,curseUsed=false,kiraEmpAA=0,kiraRecordActive=false,kiraRecorded=0,kiraRecordCap=(hero.hp+eq.hp)*0.4,magicFlameUsed=false,suliS1Buff=false,suliUltActive=false;function apply(raw,type,fenrirActive){let mult=1+damageBonus/100+(fenrirActive?0.30:0);let defMult=type==="physical"?physMult:(type==="magic"?magMult:1);return Math.max(0,raw*defMult*mult*reductionMultiplier-fixedDmgRed)}function defenseExplain(type,defMult){
+  if(type==="true"){
+    return `${span("detail-defense","防禦細節")}：真實傷害不吃物防/魔防，所以防禦倍率 = ${fmtMult(defMult)}。`;
+  }
+
+  const isPhysical = type==="physical";
+  const defenseName = isPhysical ? "物理防禦" : "魔法防禦";
+  const pierceName = isPhysical ? "物理穿透" : "魔法穿透";
+  const rawDefense = isPhysical ? enemy.armor : enemy.mdef;
+  const flatPierceUsed = isPhysical ? physPierce : magPierce;
+  const percentPierceUsed = isPhysical ? pctPhys : pctMag;
+  const fixedDefRed = Number(el(p,"fixedDefRed").value||0);
+  const pctDefRed = clampPct(el(p,"pctDefRed").value);
+
+  const afterFixedReduction = rawDefense - fixedDefRed;
+  const afterPercentReduction = Math.max(0, afterFixedReduction * (1 - pctDefRed / 100));
+  const afterFlatPierce = afterPercentReduction - flatPierceUsed;
+  const finalDefense = Math.max(0, afterFlatPierce * (1 - percentPierceUsed / 100));
+
+  return `${span("detail-defense","防禦細節")}：對手原始${defenseName} ${fmtNum(rawDefense)} → 固定降防 ${fmtNum(fixedDefRed)} 後 ${fmtNum(afterFixedReduction)} → 百分比降防 ${fmtNum(pctDefRed)}% 後 ${fmtNum(afterPercentReduction)} → 固定${pierceName} ${fmtNum(flatPierceUsed)} 後 ${fmtNum(afterFlatPierce)} → 百分比${pierceName} ${fmtNum(percentPierceUsed)}% 後 ${fmtNum(finalDefense)}；防禦倍率 = 600 / (600 + ${fmtNum(finalDefense)}) = ${fmtMult(defMult)}。`;
+}
+
+function increaseExplain(fenrir,incMult){
+  const items = [];
+
+  if(en.damageBonus > 0){
+    items.push(`犧牲之斧 +${fmtNum(en.damageBonus)}%`);
+  }
+
+  if(eq.hasHolyCodex){
+    const codexBonus = Math.floor(totalMagic / 100) * 0.5;
+    items.push(`神聖法典 +${fmtNum(codexBonus)}%（總魔攻 ${fmtNum(totalMagic)}，每 100 魔攻 +0.5%）`);
+  }
+
+  if(fenrir){
+    items.push("王者之劍 +30%（此段出手前對手血量低於 50%）");
+  }
+
+  if(items.length === 0){
+    items.push("無額外增傷");
+  }
+
+  return `${span("detail-increase","增傷細節")}：1 + ${items.join(" + ")} = 增傷倍率 ${fmtMult(incMult)}。`;
+}
+
+function reductionExplain(redMult){
+  const pctDmgDown = clampPct(el(p,"pctDmgDown").value);
+  const pctDmgRed = clampPct(el(p,"pctDmgRed").value);
+  const specialRed = clampPct(el(p,"specialRed").value);
+  const codexReduction = eq.hasHolyCodex ? Math.floor(totalMagic / 100) * 0.5 : 0;
+
+  return `${span("detail-reduction","減傷細節")}：(1 - 百分比降傷 ${fmtNum(pctDmgDown)}%) × (1 - 百分比減傷總和 ${fmtNum(pctDmgRed)}%) × (1 - 特殊減傷 ${fmtNum(specialRed)}%) × (1 - 神聖法典減傷 ${fmtNum(codexReduction)}%) = 減傷倍率 ${fmtMult(redMult)}。`;
+}
+
+function addPart(parts,raw,type,canCrit,label,isHit=true){
+  const fenrir = eq.hasFenrir && enemyHp < enemy.hp * 0.5;
+  const defMult = type==="physical" ? physMult : (type==="magic" ? magMult : 1);
+  const incMult = 1 + damageBonus / 100 + (fenrir ? 0.30 : 0);
+  const redMult = reductionMultiplier;
+
+  function calcOne(v){
+    return Math.max(0, v * defMult * incMult * redMult - fixedDmgRed);
+  }
+
+  const defenseText = defenseExplain(type,defMult);
+  const increaseText = increaseExplain(fenrir,incMult);
+  const reductionText = reductionExplain(redMult);
+
+  let dmg, formula;
+
+  if(canCrit){
+    const normalRaw = raw;
+    const critRaw = raw * critDamage / 100;
+    const normal = calcOne(normalRaw);
+    const critical = calcOne(critRaw);
+    const nonCritRate = 1 - critRate / 100;
+    const critRateDecimal = critRate / 100;
+
+    dmg = normal * nonCritRate + critical * critRateDecimal;
+
+    formula = `${formulaTitle(label+"（"+type+"）")}：可暴擊期望<br>
+${span("term-raw","普通公式值 "+fmtNum(normalRaw))} × ${span("term-defense","防禦倍率 "+fmtMult(defMult))} × ${span("term-increase","增傷倍率 "+fmtMult(incMult))} × ${span("term-reduction","減傷倍率 "+fmtMult(redMult))} - ${span("term-fixed","固定減傷 "+fmtNum(fixedDmgRed))} = ${span("term-result",fmtNum(normal))}<br>
+${span("term-raw","暴擊公式值 "+fmtNum(critRaw))} × ${span("term-defense","防禦倍率 "+fmtMult(defMult))} × ${span("term-increase","增傷倍率 "+fmtMult(incMult))} × ${span("term-reduction","減傷倍率 "+fmtMult(redMult))} - ${span("term-fixed","固定減傷 "+fmtNum(fixedDmgRed))} = ${span("term-result",fmtNum(critical))}<br>
+${span("term-result","最終期望")} = 普通傷害 ${fmtNum(normal)} × ${span("term-crit","未暴擊率 "+fmtPctDecimal(nonCritRate))} + 暴擊傷害 ${fmtNum(critical)} × ${span("term-crit","暴擊率 "+fmtPctDecimal(critRateDecimal))} = ${span("term-result",fmtNum(dmg))}
+<span class="formula-extra">${defenseText}</span>
+<span class="formula-extra">${increaseText}</span>
+<span class="formula-extra">${reductionText}</span>`;
+  } else {
+    dmg = calcOne(raw);
+
+    formula = `${formulaTitle(label+"（"+type+"）")}：${span("term-raw","公式值 "+fmtNum(raw))} × ${span("term-defense","防禦倍率 "+fmtMult(defMult))} × ${span("term-increase","增傷倍率 "+fmtMult(incMult))} × ${span("term-reduction","減傷倍率 "+fmtMult(redMult))} - ${span("term-fixed","固定減傷 "+fmtNum(fixedDmgRed))} = ${span("term-result","最終期望 "+fmtNum(dmg))}
+<span class="formula-extra">${defenseText}</span>
+<span class="formula-extra">${increaseText}</span>
+<span class="formula-extra">${reductionText}</span>`;
+  }
+
+  const before = enemyHp;
+  enemyHp = Math.max(0, enemyHp - dmg);
+  totalDamage += dmg;
+
+  if(kiraRecordActive && label!=="綺蘿殘影記錄傷害" && label.indexOf("死亡詛咒")===-1){
+    kiraRecorded += dmg;
+  }
+
+  parts.push({raw,type,dmg,label,before,after:enemyHp,fenrir,formula});
+
+  if(isHit){
+    registerHit(parts);
+  }
+}
+
+function registerHit(parts){if(en.hasDeathCurse&&!curseUsed){curseReady++;if(curseReady>=3){const raw=36+level*4+0.25*extraAttack+0.15*totalMagic;addPart(parts,raw,"magic",false,"死亡詛咒第一段：第 3 次命中觸發",false);curseUsed=true}}}function formatNoteLine(text){
+  if(!text || text.startsWith("<div") || text.includes("formula-detail") || text.includes("formula-title")){
+    return text;
+  }
+  const idx = text.indexOf("：");
+  if(idx > 0){
+    return noteTitle(text.slice(0,idx)) + text.slice(idx);
+  }
+  return text;
+}
+
+function pushRow(action,type,parts,notes){
+  if(parts.length===0&&notes.length===0)return;
+  const raw=parts.reduce((s,x)=>s+x.raw,0),dmg=parts.reduce((s,x)=>s+x.dmg,0);
+  if(parts.some(x=>x.fenrir))notes.push("王者之劍：此段出手前對手血量低於 50%，本段部分或全部傷害 +30%。");
+  if(parts.length>0){
+    notes.push(`<div class="formula-detail">計算公式：<br>${parts.map(x=>x.formula).join("<br>")}</div>`);
+  }
+  rows.push({idx:rows.length+1,action,type,notes:notes.map(formatNoteLine).join("<br>"),raw,dmg,after:enemyHp})
+}
+
+function addEndDeathCurse(){if(en.hasDeathCurse&&curseUsed){const lost=enemy.hp-enemyHp;const ratio=0.06+(Math.floor(extraAttack/100)+Math.floor(totalMagic/200))*0.01;const parts=[];addPart(parts,lost*ratio,"magic",false,`死亡詛咒第二段：連招結束後，已損生命 ${Math.round(lost)} × ${r1(ratio*100)}%`,false);pushRow("死亡詛咒二段","magic",parts,["連招全部結束後觸發，魔法傷害，吃魔防減免。"])}}const actions=[...document.querySelectorAll("."+p+"_combo")].map(x=>x.value);
+actions.forEach(a=>{
+  if(a==="none")return;
+  let parts=[],notes=[],rowType="physical";
+
+  if(a==="bloodSacrifice"){
+    if(heroId==="suli"){
+      addPart(parts,770,"physical",false,"蘇離被動・血祭");
+      notes.push("蘇離被動【血祭】：扣除自身目前 50% 生命後，在短暫延遲後對周圍造成 770 點物理傷害與 0.5 秒暈眩。此版先只計算對單一目標的傷害，不計算自損與回血。");
+    }else{
+      notes.push("此動作目前只支援蘇離。");
+    }
+  }
+
+  if(a==="s1"){
+    if(heroId==="kira"){
+      const lv=Number(el(p,"s1Lv").value),dbl=el(p,"kiraS1Double").value==="yes"?2:1;
+      addPart(parts,(kiraS1[lv]+0.20*totalMagic)*dbl,"magic",false,"綺蘿1技能");
+      notes.push(`綺蘿1技能：${kiraS1[lv]} + 20% 魔攻，魔法傷害${dbl===2?"，內圈雙倍":""}`);
+      kiraEmpAA=3;
+      if(el(p,"kiraRecord").value==="yes"){kiraRecordActive=true;kiraRecorded=0;notes.push("標記單位：開始記錄期間傷害，等 1 技能二段時計算殘影記錄傷害。")}
+      rowType="magic";
+    }else if(heroId==="suli"){
+      const lv=Number(el(p,"s1Lv").value),form=el(p,"suliS1Form").value;
+      if(form==="melee"){
+        notes.push(`蘇離 1 技能近戰形態：位移後，下一次普攻變為突進，額外造成 ${suliS1[lv]} 點物理傷害。此段本身不直接造成傷害，已改為在下一次普攻結算。`);
+        suliS1Buff=true;
+      }else{
+        addPart(parts,suliS1[lv],"physical",false,"蘇離1技能・遠程血箭");
+        notes.push(`蘇離 1 技能遠程形態：位移並射出血箭，命中第一個敵方英雄造成 ${suliS1[lv]} 點物理傷害與擊退；若背後 4m 有牆可束縛 3 秒。此版先只計算傷害。`);
+      }
+      if(en.hasShadow){
+        shadowStacks=Math.min(3,shadowStacks+1);
+        notes.push(`蘇離1技能屬於位移，影刃 +1，目前 ${shadowStacks} 層。`);
+      }
+    }else{
+      const lv=Number(el(p,"s1Lv").value);
+      addPart(parts,nakS1[lv]+0.85*extraAttack,"physical",false,"納克羅斯1技能");
+      notes.push(`納克羅斯1技能：${nakS1[lv]} + 85% 額外物攻，物理傷害`);
+      if(en.hasShadow){shadowStacks=Math.min(3,shadowStacks+1);notes.push(`影刃 +1，目前 ${shadowStacks} 層`)}
+    }
+    omniReady=eq.hasOmni;curseBladeReady=eq.hasCurse;
+  }
+
+  if(a==="s1b"){
+    if(heroId==="kira"){
+      const lv=Number(el(p,"s1Lv").value);
+      addPart(parts,kiraS1[lv]+0.40*totalMagic,"magic",false,"綺蘿1技能二段");
+      notes.push(`綺蘿1技能二段：${kiraS1[lv]} + 40% 魔攻，魔法傷害`);
+      if(kiraRecordActive){const raw=Math.min(kiraRecorded*0.30,kiraRecordCap);addPart(parts,raw,"magic",false,"綺蘿殘影記錄傷害",false);notes.push(`殘影記錄傷害：期間傷害 ${Math.round(kiraRecorded)} × 30%，上限為綺蘿最大生命 40%；此段魔法傷害吃魔防。`);kiraRecordActive=false;kiraRecorded=0}
+      rowType="magic";
+    }else{
+      notes.push(heroId==="suli" ? "蘇離沒有一技能二段，此格不產生傷害。" : "此動作目前只支援綺蘿。");
+    }
+    curseBladeReady=eq.hasCurse;
+  }
+
+  if(a==="s2"){
+    if(heroId==="kira"){
+      const lv=Number(el(p,"s2Lv").value),hits=Number(el(p,"kiraPathHits").value),tri=el(p,"kiraTriangle").value==="yes";
+      for(let i=0;i<hits;i++)addPart(parts,kiraS2Path[lv]+0.15*totalMagic,"magic",false,"綺蘿2技能路徑");
+      if(tri)addPart(parts,kiraS2Tri[lv]+0.60*totalMagic,"magic",false,"綺蘿2技能三角爆發");
+      notes.push(`綺蘿2技能：路徑命中 ${hits} 次；三角爆發：${tri?"命中":"未命中"}。`);
+      rowType="magic";
+    }else if(heroId==="suli"){
+      const lv=Number(el(p,"s2Lv").value),form=el(p,"suliS2Form").value,base=suliS2[lv]+0.65*totalAttack;
+      if(form==="melee"){
+        addPart(parts,base,"physical",false,"蘇離2技能・近戰掃擊");
+        notes.push(`蘇離 2 技能近戰形態：${suliS2[lv]} + 65% 總物攻，物理傷害，並有 0.5 秒暈眩。`);
+      }else{
+        addPart(parts,base*2,"physical",false,"蘇離2技能・遠程破陣箭");
+        notes.push(`蘇離 2 技能遠程形態：瞄準後對被鎖定目標射出破陣箭矢，造成雙倍物理傷害；此版以單一目標結算為 2 × (${suliS2[lv]} + 65% 總物攻)。`);
+      }
+    }else{
+      skill2Buff=true;notes.push("納克羅斯2技能：下一次普攻附加橫掃額外基礎傷害。 ");if(en.hasShadow){shadowStacks=Math.min(3,shadowStacks+1);notes.push(`影刃 +1，目前 ${shadowStacks} 層`)}
+    }
+    omniReady=eq.hasOmni;
+  }
+
+  if(a==="s3"){
+    if(heroId==="kira"){
+      notes.push("綺蘿3技能：無直接傷害，重置 1、2 技能冷卻。 ");
+    }else if(heroId==="suli"){
+      suliUltActive=true;
+      notes.push(`蘇離 3 技能：直接進入遠程形態，期間每次普攻射出 3 發血箭，每發造成 55% 傷害；同時獲得 20% 物理吸血、30% 跑速加成與免疫減速。此技能本身無直接傷害，效果持續到本套連招結束。冷卻顯示：Lv.${Number(el(p,"s3Lv").value)} 約 ${suliS3Cd[Number(el(p,"s3Lv").value)]||0} 秒。`);
+    }else{
+      const lv=Number(el(p,"s3Lv").value);if(lv>0){for(let i=0;i<4;i++)addPart(parts,nakS3[lv]+extraAttack,"physical",false,"納克羅斯3技能");notes.push(`納克羅斯3技能：4段 × (${nakS3[lv]} + 100% 額外物攻)，物理傷害`)}
+    }
+    omniReady=eq.hasOmni;curseBladeReady=eq.hasCurse;
+  }
+
+  if(a==="aa"){
+    if(heroId==="kira"){
+      const emp=kiraEmpAA>0;const type=emp?"magic":"physical";addPart(parts,totalAttack+0.35*totalMagic,type,true,emp?"綺蘿強化普攻":"綺蘿一般普攻");notes.push(`${emp?"綺蘿強化普攻：魔法傷害":"綺蘿一般普攻：物理傷害"}，100% 總物攻 + 35% 魔攻，普攻本體可暴擊。`);if(emp)kiraEmpAA--;rowType=type;
+    }else if(heroId==="suli"){
+      if(suliUltActive){
+        for(let i=1;i<=3;i++)addPart(parts,totalAttack*0.55,"physical",true,`蘇離3技能血箭 ${i}`);
+        notes.push("蘇離大招期間普攻：本次普攻改為 3 發血箭，每發造成 55% 的普攻傷害；此版以每箭可暴擊的期望值計算。");
+      }else{
+        addPart(parts,totalAttack,"physical",true,"蘇離一般普攻");
+        notes.push("蘇離一般普攻：100% 總物攻，物理傷害，可暴擊。");
+      }
+      if(suliS1Buff){
+        const lv=Number(el(p,"s1Lv").value);
+        addPart(parts,suliS1[lv],"physical",false,"蘇離1技能近戰追加傷害",false);
+        notes.push(`蘇離 1 技能近戰追加：下一次普攻額外造成 ${suliS1[lv]} 點物理傷害。`);
+        suliS1Buff=false;
+      }
+      if(shadowStacks>0&&en.hasShadow){
+        addPart(parts,(30+level*5+0.10*extraAttack)*shadowStacks,"physical",false,"影刃",false);
+        notes.push(`蘇離普攻消耗影刃 ${shadowStacks} 層，物理傷害。`);
+        shadowStacks=0;
+      }
+    }else{
+      addPart(parts,totalAttack,"physical",true,"納克羅斯普攻本體");notes.push("納克羅斯普攻本體：100% 總物攻，可暴擊。 ");if(skill2Buff){const lv=Number(el(p,"s2Lv").value);addPart(parts,nakS2[lv],"physical",false,"二技能橫掃額外基礎傷害",false);notes.push(`二技能橫掃額外基礎傷害：${nakS2[lv]}，不吃暴擊。`);skill2Buff=false}basicCounter++;if(basicCounter>=4){addPart(parts,90+0.35*extraAttack,"physical",false,"第四下普攻被動",false);notes.push("納克羅斯第四下普攻被動：90 + 35% 額外物攻，不吃暴擊。 ");basicCounter=0}if(shadowStacks>0&&en.hasShadow){addPart(parts,(30+level*5+0.10*extraAttack)*shadowStacks,"physical",false,"影刃",false);notes.push(`影刃 ${shadowStacks} 層，物理傷害。`);shadowStacks=0}}
+
+    if(eq.hasMorningStar){
+      const starDamage = hero.type==="ranged" ? 100 : 50;
+      addPart(parts,starDamage,"physical",false,"晨星",false);
+      notes.push(`晨星：普攻附帶 ${starDamage} 點物理傷害${hero.type==="ranged"?"（遠程英雄效果翻倍）":""}。`);
+    }
+
+    if(omniReady&&eq.hasOmni&&omniUsed<omniLimit){addPart(parts,totalAttack,"physical",false,"全能武器",false);omniUsed++;notes.push(`全能武器第 ${omniUsed} 次：100% 總物攻，物理傷害。`);omniReady=false}else if(omniReady&&eq.hasOmni&&omniUsed>=omniLimit){omniReady=false}
+
+    if(curseBladeReady&&eq.hasCurse&&curseBladeUsed<curseBladeLimit){addPart(parts,0.35*totalAttack+0.50*totalMagic,"magic",false,"詛咒之刃元素之力",false);curseBladeUsed++;notes.push(`詛咒之刃元素之力第 ${curseBladeUsed} 次：普攻額外 35% 物理加成 + 50% 魔法加成的魔法傷害。`);curseBladeReady=false}else if(curseBladeReady&&eq.hasCurse&&curseBladeUsed>=curseBladeLimit){notes.push("詛咒之刃元素之力已準備，但已達你設定的觸發次數上限。");curseBladeReady=false}
+
+    if(eq.hasTwilight){addPart(parts,40+0.20*totalMagic,"magic",false,"暮光之刃",false);notes.push("暮光之刃：普攻額外 40 + 20% 魔法加成的魔法傷害。 ")}
+  }
+
+  if(eq.hasFrostHammer&&frostHammerUsed<frostHammerLimit&&parts.length>0){
+    const fhRaw = frostHammerBaseDamage(level)+0.45*extraAttack;
+    addPart(parts,fhRaw,"physical",false,"極霜重錘・寒傷",false);
+    frostHammerUsed++;
+    notes.push(`極霜重錘寒傷第 ${frostHammerUsed} 次：${frostHammerBaseDamage(level)} + 45% 額外物攻，物理傷害。`);
+  }
+
+  if(en.hasMagicFlame&&!magicFlameUsed&&parts.length>0){addPart(parts,50+level*5+0.15*totalMagic,"magic",false,"魔炎",false);notes.push("魔炎：第一次普攻/技能命中時觸發，魔法傷害。 ");magicFlameUsed=true}
+  pushRow(actionName(a),rowType,parts,notes)
+});
+addEndDeathCurse();const arcWarn=[];["red","purple","green"].forEach(c=>{if(ar.counts[c]>10)arcWarn.push(`${c} 奧義 ${ar.counts[c]} 顆，超過 10 顆。`)});el(p,"arcanaWarn").innerHTML=arcWarn.join("<br>");const statBreakdown = buildStatBreakdown(p,{
+  level,
+  heroId,
+  hero,
+  eq,
+  ar,
+  en,
+  enemy,
+  extraAttack,
+  totalAttack,
+  totalMagic,
+  critRate,
+  critDamage,
+  cooldown,
+  physPierce,
+  magPierce,
+  magicLifesteal,
+  finalArmor,
+  finalMdef,
+  pctPhys,
+  pctMag,
+  damageBonus,
+  damageReduction
+});
+output(p,{totalAttack,extraAttack,totalMagic,critRate,critDamage,cooldown,physPierce,magPierce,magicLifesteal,finalArmor,finalMdef,enemy,totalDamage,rows,warnings,ar,statBreakdown,equipmentSummary:buildEquipmentSummary(p,eq,level)})}
+
+
+function signedValue(value, unit=""){
+  const n = Number(value || 0);
+  const sign = n >= 0 ? "+" : "";
+  return sign + fmtNum(n) + unit;
+}
+
+function attrPush(parts, name, value, unit=""){
+  const n = Number(value || 0);
+  if(Math.abs(n) > 0.0001){
+    parts.push(`${name} ${signedValue(n, unit)}`);
+  }
+}
+
+function formatEquipmentAttrs(item, level, p, includeDynamic=true){
+  const parts = [];
+
+  attrPush(parts, "物理攻擊", item.attack);
+  attrPush(parts, "魔法攻擊", item.magicPower);
+  attrPush(parts, "攻擊速度", item.attackSpeed, "%");
+  attrPush(parts, "暴擊率", item.critRate, "%");
+  attrPush(parts, "冷卻縮減", item.cooldown, "%");
+  attrPush(parts, "最大生命", item.hp);
+  attrPush(parts, "固定物理穿透", item.flatPierce);
+  attrPush(parts, "固定魔法穿透", item.magicPierce);
+  attrPush(parts, "百分比物理穿透", item.percentPhysPierce, "%");
+  attrPush(parts, "百分比魔法穿透", item.percentMagicPierce, "%");
+  attrPush(parts, "暴擊效果", item.critDamageBonus, "%");
+  attrPush(parts, "跑速", item.moveSpeed, "%");
+  attrPush(parts, "跑速", item.moveSpeedFlat);
+  attrPush(parts, "魔法吸血", item.magicLifesteal, "%");
+
+  if(item.scalingPierce){
+    attrPush(parts, "破陣戰矛成長物穿", rankbreakerPierce(level));
+  }
+
+  if(includeDynamic && (item.passives || []).includes("morningStar")){
+    const heroId = el(p,"heroSelect").value;
+    const isRanged = (heroes[heroId]||{}).type === "ranged";
+    attrPush(parts, "晨星物理穿透", isRanged ? 40 : 20, "%");
+    attrPush(parts, "晨星普攻附帶物理傷害", isRanged ? 100 : 50);
+  }
+
+  if(includeDynamic && (item.passives || []).includes("frostHammer")){
+    attrPush(parts, "寒傷基礎傷害", frostHammerBaseDamage(level));
+    attrPush(parts, "寒傷額外物攻係數", 45, "%");
+  }
+
+  if(includeDynamic && (item.passives || []).includes("curseBlade")){
+    const stacks = Math.min(25, Math.max(0, Number(el(p,"curseStacks").value || 0)));
+    attrPush(parts, `獵殺 ${stacks} 層魔法攻擊`, 4 * stacks);
+    attrPush(parts, `獵殺 ${stacks} 層冷卻縮減`, 0.2 * stacks, "%");
+  }
+
+  if(includeDynamic && (item.passives || []).includes("magisterRobe")){
+    const ids = [...document.querySelectorAll("." + p + "_equip")].map(x => x.value);
+    const extraHp = ids.reduce((sum, id) => {
+      const current = equipments.find(x => x.id === id) || {};
+      return sum + (current.hp || 0);
+    }, 0);
+
+    attrPush(parts, `充靈魔法攻擊（等級 ${level}，額外生命 ${fmtNum(extraHp)}）`, magisterRobeBonusMagicPower(level, extraHp));
+    attrPush(parts, `破魔魔法穿透（等級 ${level}，額外生命 ${fmtNum(extraHp)}）`, magisterRobeBonusMagicPierce(level, extraHp));
+  }
+
+  return parts.length ? parts.join("，") : "沒有直接屬性加成";
+}
+
+function getEquipmentTotalSummary(eq){
+  const parts = [];
+
+  attrPush(parts, "物理攻擊", eq.attack);
+  attrPush(parts, "魔法攻擊", eq.magicPower);
+  attrPush(parts, "攻擊速度", eq.attackSpeed, "%");
+  attrPush(parts, "暴擊率", eq.critRate, "%");
+  attrPush(parts, "冷卻縮減", eq.cooldown, "%");
+  attrPush(parts, "最大生命", eq.hp);
+  attrPush(parts, "固定物理穿透", eq.flatPierce);
+  attrPush(parts, "固定魔法穿透", eq.magicPierce);
+  attrPush(parts, "百分比物理穿透", eq.percentPhysPierce, "%");
+  attrPush(parts, "百分比魔法穿透", eq.percentMagicPierce, "%");
+  attrPush(parts, "暴擊效果", eq.critDamageBonus, "%");
+  attrPush(parts, "跑速", eq.moveSpeed, "%");
+  attrPush(parts, "魔法吸血", eq.magicLifesteal, "%");
+
+  return parts.length ? parts.join("，") : "目前沒有裝備屬性。";
+}
+
+function buildEquipmentSummary(p, eq, level){
+  const ids = [...document.querySelectorAll("." + p + "_equip")].map(x => x.value);
+  const rows = [];
+
+  ids.forEach((id, index) => {
+    const item = equipments.find(x => x.id === id) || {};
+    if(!item.id || item.id === "none") return;
+
+    rows.push(`<div class="equip-summary-row"><span class="equip-name">裝備 ${index + 1}：${item.name}</span>：${formatEquipmentAttrs(item, level, p, true)}</div>`);
+  });
+
+  if(rows.length === 0){
+    rows.push(`<div class="equip-summary-row">目前 6 格裝備皆未選擇。</div>`);
+  }
+
+  rows.push(`<div class="equip-summary-total">已選裝備加總：${getEquipmentTotalSummary(eq)}</div>`);
+  return rows.join("");
+}
+
+function breakdownPart(label, value, unit=""){
+  return `${span("breakdown-part", label + " " + signedValue(value, unit))}`;
+}
+
+function joinParts(parts){
+  return parts.length ? parts.join(` <span class="breakdown-eq">+</span> `) : "0";
+}
+
+function statRow(title, total, parts, unit=""){
+  return `<div class="breakdown-row">${span("breakdown-title", title + " = " + fmtNum(total) + unit)} <span class="breakdown-eq">=</span> ${joinParts(parts)}</div>`;
+}
+
+function getArcanaBreakdownParts(p){
+  const data = {
+    attack: [],
+    magicPower: [],
+    critRate: [],
+    flatPierce: [],
+    magicPierce: [],
+    lifesteal: [],
+    attackSpeed: [],
+    moveSpeed: []
+  };
+
+  const colorName = {
+    red: "紅色",
+    purple: "紫色",
+    green: "綠色"
+  };
+
+  const selects = document.querySelectorAll("." + p + "_arcana");
+  const qtys = document.querySelectorAll("." + p + "_arcQty");
+
+  selects.forEach((select, index) => {
+    const color = select.dataset.color;
+    const qty = Number(qtys[index].value || 0);
+    if(qty <= 0) return;
+
+    const option = arcanaOptions[color].find(x => x.id === select.value) || {};
+    if(option.id === "none") return;
+
+    const label = `${colorName[color]}奧義 ${option.name} ×${qty}`;
+
+    ["attack","magicPower","critRate","flatPierce","magicPierce","lifesteal","attackSpeed","moveSpeed"].forEach(key => {
+      const value = (option[key] || 0) * qty;
+      if(Math.abs(value) > 0.0001){
+        data[key].push(breakdownPart(label, value, key==="critRate" || key==="lifesteal" || key==="attackSpeed" || key==="moveSpeed" ? "%" : ""));
+      }
+    });
+  });
+
+  return data;
+}
+
+function getEquipmentBreakdownParts(p, level){
+  const data = {
+    attack: [],
+    magicPower: [],
+    attackSpeed: [],
+    critRate: [],
+    cooldown: [],
+    hp: [],
+    flatPierce: [],
+    magicPierce: [],
+    percentPhysPierce: [],
+    percentMagicPierce: [],
+    critDamageBonus: [],
+    moveSpeed: [],
+    magicLifesteal: []
+  };
+
+  const ids = [...document.querySelectorAll("." + p + "_equip")].map(x => x.value);
+
+  ids.forEach(id => {
+    const item = equipments.find(x => x.id === id) || {};
+    if(!item.id || item.id === "none") return;
+
+    const label = "裝備 " + item.name;
+
+    ["attack","magicPower","attackSpeed","critRate","cooldown","hp","flatPierce","magicPierce","percentPhysPierce","percentMagicPierce","critDamageBonus","moveSpeed","magicLifesteal"].forEach(key => {
+      const value = item[key] || 0;
+      if(Math.abs(value) > 0.0001){
+        const unit = ["attackSpeed","critRate","cooldown","percentPhysPierce","percentMagicPierce","critDamageBonus","moveSpeed","magicLifesteal"].includes(key) ? "%" : "";
+        data[key].push(breakdownPart(label, value, unit));
+      }
+    });
+
+    if(item.scalingPierce){
+      data.flatPierce.push(breakdownPart("裝備 破陣戰矛成長物穿（等級 " + level + "）", rankbreakerPierce(level)));
+    }
+  });
+
+  const hasCurse = ids.some(id => {
+    const item = equipments.find(x => x.id === id) || {};
+    return (item.passives || []).includes("curseBlade");
+  });
+
+  if(hasCurse){
+    const stacks = Math.min(25, Math.max(0, Number(el(p,"curseStacks").value || 0)));
+    if(stacks > 0){
+      data.magicPower.push(breakdownPart("詛咒之刃獵殺 " + stacks + " 層", 4 * stacks));
+      data.cooldown.push(breakdownPart("詛咒之刃獵殺 " + stacks + " 層", 0.2 * stacks, "%"));
+    }
+  }
+
+  const hasMorningStar = ids.some(id => {
+    const item = equipments.find(x => x.id === id) || {};
+    return (item.passives || []).includes("morningStar");
+  });
+
+  if(hasMorningStar){
+    const heroId = el(p,"heroSelect").value;
+    const isRanged = (heroes[heroId]||{}).type === "ranged";
+    data.percentPhysPierce.push(breakdownPart("裝備 晨星物理穿透" + (isRanged ? "（遠程翻倍）" : ""), isRanged ? 40 : 20, "%"));
+  }
+
+  const hasMageRobe = ids.some(id => {
+    const item = equipments.find(x => x.id === id) || {};
+    return (item.passives || []).includes("magisterRobe");
+  });
+
+  if(hasMageRobe){
+    const robeExtraHp = ids.reduce((sum,id)=>{
+      const item = equipments.find(x => x.id === id) || {};
+      return sum + (item.hp || 0);
+    },0);
+    const robeMagicPower = magisterRobeBonusMagicPower(level, robeExtraHp);
+    const robeMagicPierce = magisterRobeBonusMagicPierce(level, robeExtraHp);
+    data.magicPower.push(breakdownPart("魔導師罩袍 充靈（等級 " + level + "，額外生命 " + fmtNum(robeExtraHp) + "）", robeMagicPower));
+    data.magicPierce.push(breakdownPart("魔導師罩袍 破魔（等級 " + level + "，額外生命 " + fmtNum(robeExtraHp) + "）", robeMagicPierce));
+  }
+
+  return data;
+}
+
+function getEnchantBreakdownParts(p, level, totalMagic){
+  const data = {
+    attack: [],
+    magicPower: [],
+    flatPierce: [],
+    magicPierce: [],
+    damageBonus: [],
+    damageReduction: []
+  };
+
+  const main1 = el(p,"enchantTop1").value;
+  const main2 = el(p,"enchantTop2").value;
+  const sub1 = el(p,"enchantBottom1").value;
+  const sub2 = el(p,"enchantBottom2").value;
+
+  if(main2 === "demonClaw" || sub2 === "demonClaw_sub2"){
+    data.attack.push(breakdownPart("魔紋 鬼爪物攻（等級 " + level + "）", demonClawAtk(level)));
+    data.magicPower.push(breakdownPart("魔紋 鬼爪魔攻（等級 " + level + "）", demonClawMag(level)));
+  }
+
+  if(sub2 === "holyVerdict" || main2 === "holyVerdict_main2"){
+    data.flatPierce.push(breakdownPart("魔紋 聖決物穿（等級 " + level + "）", holyVerdictPierce(level)));
+    data.magicPierce.push(breakdownPart("魔紋 聖決魔穿（等級 " + level + "）", holyVerdictPierce(level)));
+  }
+
+  if(sub1 === "sacrificeAxe" || main1 === "sacrificeAxe_main1"){
+    data.damageBonus.push(breakdownPart("魔紋 犧牲之斧", 3, "%"));
+  }
+
+  return data;
+}
+
+function buildStatBreakdown(p, context){
+  const level = context.level;
+  const heroData = heroes[context.heroId];
+  const equipParts = getEquipmentBreakdownParts(p, level);
+  const arcanaParts = getArcanaBreakdownParts(p);
+  const enchantParts = getEnchantBreakdownParts(p, level, context.totalMagic);
+
+  const attackParts = [
+    breakdownPart("英雄基礎物攻", context.hero.attack),
+    ...equipParts.attack,
+    ...arcanaParts.attack,
+    ...enchantParts.attack
+  ];
+
+  const extraAttackParts = [
+    ...equipParts.attack,
+    ...arcanaParts.attack,
+    ...enchantParts.attack
+  ];
+
+  const rawMagicParts = [
+    breakdownPart("英雄基礎魔攻", context.hero.magicPower),
+    ...equipParts.magicPower,
+    ...arcanaParts.magicPower,
+    ...enchantParts.magicPower
+  ];
+
+  const critRateParts = [
+    breakdownPart("英雄基礎暴擊率", context.hero.critRate, "%"),
+    ...equipParts.critRate,
+    ...arcanaParts.critRate
+  ];
+
+  const critDamageParts = [
+    breakdownPart("英雄基礎暴擊效果", context.hero.critDamage, "%"),
+    ...equipParts.critDamageBonus
+  ];
+
+  const cooldownRaw = context.eq.cooldown;
+  const cooldownParts = [...equipParts.cooldown];
+
+  const physPierceParts = [
+    ...equipParts.flatPierce,
+    ...arcanaParts.flatPierce,
+    ...enchantParts.flatPierce
+  ];
+
+  const magPierceParts = [
+    ...equipParts.magicPierce,
+    ...arcanaParts.magicPierce,
+    ...enchantParts.magicPierce
+  ];
+
+  const rows = [];
+
+  rows.push(statRow("總物攻", context.totalAttack, attackParts));
+  rows.push(statRow("額外物攻", context.extraAttack, extraAttackParts));
+
+  if(context.eq.hasHecate){
+    rows.push(`<div class="breakdown-row">${span("breakdown-title","總魔攻 = " + fmtNum(context.totalMagic))} <span class="breakdown-eq">=</span>（${joinParts(rawMagicParts)}） <span class="breakdown-eq">× 巫妖皇冠被動 1.35</span> <span class="breakdown-eq">=</span> ${span("breakdown-part", fmtNum(context.totalMagic))}</div>`);
+  } else {
+    rows.push(statRow("總魔攻", context.totalMagic, rawMagicParts));
+  }
+
+  rows.push(statRow("暴擊率", context.critRate, critRateParts, "%"));
+  rows.push(statRow("暴擊效果", context.critDamage, critDamageParts, "%"));
+
+  if(cooldownRaw > 40){
+    rows.push(`<div class="breakdown-row">${span("breakdown-title","冷卻縮減 = " + fmtNum(context.cooldown) + "%")} <span class="breakdown-eq">=</span> min(40%，${joinParts(cooldownParts)})；冷卻小計 ${fmtNum(cooldownRaw)}%，套用上限後 ${fmtNum(context.cooldown)}%</div>`);
+  } else {
+    rows.push(statRow("冷卻縮減", context.cooldown, cooldownParts, "%"));
+  }
+
+  rows.push(statRow("物理穿透", context.physPierce, physPierceParts));
+
+  if((context.pctPhys||0) > 0){
+    const pctPhysParts = [
+      ...equipParts.percentPhysPierce
+    ];
+    rows.push(statRow("百分比物理穿透", context.pctPhys, pctPhysParts, "%"));
+  }
+  rows.push(statRow("魔法穿透", context.magPierce, magPierceParts));
+
+  if((context.magicLifesteal||0) > 0){
+    rows.push(statRow("魔法吸血", context.magicLifesteal, equipParts.magicLifesteal || [], "%"));
+  }
+
+  const fixedDefRed = Number(el(p,"fixedDefRed").value || 0);
+  const pctDefRed = clampPct(el(p,"pctDefRed").value);
+  const physPct = context.pctPhys;
+  const magPct = context.pctMag;
+
+  rows.push(`<div class="breakdown-row">${span("breakdown-title","對手最終物防 = " + fmtNum(context.finalArmor))} <span class="breakdown-eq">=</span> max(0, (((對手實際物防 ${fmtNum(context.enemy.armor)} - 固定降防 ${fmtNum(fixedDefRed)}) × (1 - 百分比降防 ${fmtNum(pctDefRed)}%)) - 物理穿透 ${fmtNum(context.physPierce)}) × (1 - 百分比物穿 ${fmtNum(physPct)}%))</div>`);
+
+  rows.push(`<div class="breakdown-row">${span("breakdown-title","對手最終魔防 = " + fmtNum(context.finalMdef))} <span class="breakdown-eq">=</span> max(0, (((對手實際魔防 ${fmtNum(context.enemy.mdef)} - 固定降防 ${fmtNum(fixedDefRed)}) × (1 - 百分比降防 ${fmtNum(pctDefRed)}%)) - 魔法穿透 ${fmtNum(context.magPierce)}) × (1 - 百分比魔穿 ${fmtNum(magPct)}%))</div>`);
+
+  const damageBonusParts = [
+    ...enchantParts.damageBonus
+  ];
+
+  if(context.eq.hasHolyCodex){
+    const codexBonus = Math.floor(context.totalMagic / 100) * 0.5;
+    damageBonusParts.push(breakdownPart("神聖法典增傷（每100魔攻+0.5%）", codexBonus, "%"));
+    rows.push(statRow("常駐增傷", context.damageBonus, damageBonusParts, "%"));
+    rows.push(statRow("神聖法典減傷", context.damageReduction, [breakdownPart("神聖法典減傷（每100魔攻+0.5%）", context.damageReduction, "%")], "%"));
+  } else if(damageBonusParts.length > 0){
+    rows.push(statRow("常駐增傷", context.damageBonus, damageBonusParts, "%"));
+  }
+
+  return rows.join("");
+}
+
+function formatArcanaTotal(ar){
+  const parts = [];
+  if(Math.abs(ar.attack) > 0.0001) parts.push(`物理攻擊 +${r1(ar.attack)}`);
+  if(Math.abs(ar.magicPower) > 0.0001) parts.push(`魔法攻擊 +${r1(ar.magicPower)}`);
+  if(Math.abs(ar.critRate) > 0.0001) parts.push(`暴擊率 +${r1(ar.critRate)}%`);
+  if(Math.abs(ar.flatPierce) > 0.0001) parts.push(`物理穿透 +${r1(ar.flatPierce)}`);
+  if(Math.abs(ar.magicPierce) > 0.0001) parts.push(`魔法穿透 +${r1(ar.magicPierce)}`);
+  if(Math.abs(ar.lifesteal) > 0.0001) parts.push(`物理吸血 +${r1(ar.lifesteal)}%`);
+  if(Math.abs(ar.attackSpeed) > 0.0001) parts.push(`攻擊速度 +${r1(ar.attackSpeed)}%`);
+  if(Math.abs(ar.moveSpeed) > 0.0001) parts.push(`跑速 +${r1(ar.moveSpeed)}%`);
+
+  const countText = `紅 ${ar.counts.red} 顆、紫 ${ar.counts.purple} 顆、綠 ${ar.counts.green} 顆，合計 ${ar.counts.red + ar.counts.purple + ar.counts.green} 顆。`;
+  return countText + " " + (parts.length ? parts.join("，") : "目前沒有任何屬性加成。");
+}
+
+function output(p,d){if(d.statBreakdown){el(p,"statBreakdown").innerHTML=d.statBreakdown;}if(d.equipmentSummary){el(p,"equipmentSummaryText").innerHTML=d.equipmentSummary;}el(p,"enemyHp").textContent=Math.round(d.enemy.baseHp);el(p,"enemyArmor").textContent=r1(d.enemy.baseArmor);el(p,"enemyMdef").textContent=r1(d.enemy.baseMdef);if(d.ar){el(p,"arcanaTotalText").textContent=formatArcanaTotal(d.ar);}else{el(p,"arcanaTotalText").textContent="奧義總加成尚未取得，請重新選擇一次奧義。";}el(p,"totalAtk").textContent=r1(d.totalAttack);el(p,"extraAtk").textContent=r1(d.extraAttack);el(p,"totalMag").textContent=r1(d.totalMagic);el(p,"critRate").textContent=pct(d.critRate);el(p,"critDmg").textContent=pct(d.critDamage);el(p,"cooldown").textContent=pct(d.cooldown);el(p,"physPierce").textContent=r1(d.physPierce);el(p,"magPierce").textContent=r1(d.magPierce);el(p,"magicLifesteal").textContent=pct(d.magicLifesteal||0);el(p,"finalArmor").textContent=r1(d.finalArmor);el(p,"finalMdef").textContent=r1(d.finalMdef);el(p,"totalDamageOut").textContent=Math.round(d.totalDamage);el(p,"killText").textContent=d.totalDamage>=d.enemy.hp?`對手生命約 ${Math.round(d.enemy.hp)}，期望傷害 ${Math.round(d.totalDamage)}，理論上足以擊殺。`:`對手生命約 ${Math.round(d.enemy.hp)}，期望傷害 ${Math.round(d.totalDamage)}，還差 ${Math.round(d.enemy.hp-d.totalDamage)}。`;const tbody=el(p,"rows");tbody.innerHTML="";d.rows.forEach(x=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${x.idx}</td><td>${x.action}</td><td>${x.type}</td><td class="left">${x.notes}</td><td>${Math.round(x.dmg)}</td><td>${Math.round(x.after)}</td>`;tbody.appendChild(tr)});el(p,"warn").innerHTML=d.warnings.join("<br>");state[p]={totalAttack:d.totalAttack,totalMagic:d.totalMagic,critRate:d.critRate,physPierce:d.physPierce,magPierce:d.magPierce,finalArmor:d.finalArmor,finalMdef:d.finalMdef,totalDamage:d.totalDamage};updateCmp();scheduleSyncABSectionHeights()}function updateCmp(){if(!state.A||!state.B)return;const m=[["atk","totalAttack"],["mag","totalMagic"],["crit","critRate"],["pp","physPierce"],["mp","magPierce"],["dmg","totalDamage"]];m.forEach(([id,k])=>{document.getElementById(`cmp_a_${id}`).textContent=k==="critRate"?pct(state.A[k]):Math.round(state.A[k]);document.getElementById(`cmp_b_${id}`).textContent=k==="critRate"?pct(state.B[k]):Math.round(state.B[k]);document.getElementById(`cmp_d_${id}`).textContent=k==="critRate"?pct(state.A[k]-state.B[k]):Math.round(state.A[k]-state.B[k])})}
+
+function getTopLevelSections(prefix){
+  const build = document.getElementById("build" + prefix);
+  if(!build) return [];
+  return Array.from(build.children).filter(node => node.classList && node.classList.contains("section"));
+}
+
+function syncABSectionHeights(){
+  const aSections = getTopLevelSections("A");
+  const bSections = getTopLevelSections("B");
+  const count = Math.min(aSections.length, bSections.length);
+
+  [...aSections, ...bSections].forEach(section => {
+    section.style.minHeight = "";
+  });
+
+  for(let i = 0; i < count; i++){
+    const maxHeight = Math.max(aSections[i].offsetHeight, bSections[i].offsetHeight);
+    aSections[i].style.minHeight = maxHeight + "px";
+    bSections[i].style.minHeight = maxHeight + "px";
+  }
+}
+
+let syncABSectionHeightsRequest = null;
+
+function scheduleSyncABSectionHeights(){
+  if(syncABSectionHeightsRequest){
+    cancelAnimationFrame(syncABSectionHeightsRequest);
+  }
+
+  syncABSectionHeightsRequest = requestAnimationFrame(() => {
+    syncABSectionHeights();
+    syncABSectionHeightsRequest = null;
+  });
+}
+
+window.addEventListener("resize", scheduleSyncABSectionHeights);
+
+createBuild("buildA","A","A 組");createBuild("buildB","B","B 組");
+scheduleSyncABSectionHeights();
+</script></body></html>
